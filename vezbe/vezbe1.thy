@@ -185,7 +185,8 @@ not exist x (exists y povredio x i voli x y )
 lemma "(∀ x y. prijatelj x y ⟶ prijatelj y  x)
    ∧ (∀ x y. prijatelj x y ⟶ voli x y)
    ∧ (¬(∃ x y. voli x y ∧ povredio x y ))
-   ∧ (∃ x y. prijatelj x y ∧ povredio y x)"
+   ∧ (∃ x y. prijatelj x y ∧ povredio y x)
+    --> False"
   by auto 
 
 
