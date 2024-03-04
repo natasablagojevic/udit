@@ -1,0 +1,6 @@
+theory Cas3 
+  import Main 
+
+begin 
+
+end 
