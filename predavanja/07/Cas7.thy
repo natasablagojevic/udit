@@ -1,0 +1,133 @@
+theory Cas7
+  imports Main HOL.Real
+begin 
+
+(*
+  PRINCIP MATEMATICKE INDUKCIJE
+
+*)
+
+thm nat.induct
+
+lemma nat_iduct:
+  fixes n :: nat
+  assumes "P 0"
+  assumes "\<And> n. P n \<Longrightarrow> P (n + 1)"
+  shows "P n"
+  sorry 
+
+thm less_induct
+
+
+(*
+  1+2+3+...+n = n*(n+1)/2
+*)
+
+lemma 
+  fixes n:: nat 
+  shows "\<Sum> {0..<n+1} = (n*(n+1)) div 2"
+proof (induction n)
+  case 0
+  show ?case
+    by simp (* trivijalno  *)
+
+next 
+  case (Suc n)
+  note IH = this
+
+  have "\<Sum> {0..<Suc n + 1} = \<Sum> ({0..<n+1} \<union> {n+1})" 
+    by auto
+
+  also have "... = \<Sum> {0..<n+1} + (n+1)"
+    by auto
+
+  also have "... = n*(n+1) div 2 + (n+1)"
+    using IH (*Suc*)
+    by auto
+
+  also have "... = n*(n+1) div 2 + (2*(n+1)) div 2"
+    by auto
+
+  also have "... = (n+1)*(n+2) div 2"
+    by auto
+
+  finally
+  show ?case 
+    by auto
+qed
+
+(*dvd = relacija deljivosti*)
+
+lemma
+  fixes n:: nat
+  shows "3 dvd ((5::nat)^n + 2^(n+1))"
+  
+proof (induction n)
+  case 0
+  show ?case 
+    by (simp add: numeral_3_eq_3)
+
+next 
+  case (Suc n)
+
+  then obtain k::nat where IH: "5^n + 2^(n+1) = 3*k"
+    by auto 
+
+  have "(5::nat)^(n+1) + 2^(n+2) = 5*5^n + 2*2^(n+1)"
+    by auto
+
+  also have "... = (3*5^n + 2*5^n) + 2*2^(n+1)"
+    by auto 
+
+  also have "... = 3*5^n + 2*(5^n + 2^(n+1))"
+    by auto 
+
+(* pocetak = 3*5^n + 2*(5^n + 2^(n+1)) .  *)
+
+
+  also have "... = 3*5^n + 2 * (3*k)"
+    using IH 
+    by auto 
+
+  also have "... = 3*(5^n + 2*k)"
+    by auto
+
+  finally show ?case
+    by (metis Suc_1 add.commute add_Suc_shift dvd_triv_left plus_1_eq_Suc)
+
+qed
+
+
+lemma 
+  fixes n::nat 
+  assumes "n \<ge> 5"
+  shows "(2::nat)^5 > n^2"
+  using assms
+proof (induction n rule: dec_induct)
+
+  case base
+  show ?case
+    by auto
+
+next 
+  case (step k)
+
+  then have "2^(k+1) > 2*k^2"
+    by auto
+
+  moreover 
+
+  have "(k+1)^2 < 2*k^2"
+    sorry
+
+
+  ultimately
+
+  show ?case 
+    by auto
+
+qed
+
+(*rastuci lanac nejednakosti*)
+
+end 

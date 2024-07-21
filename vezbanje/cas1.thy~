@@ -1,0 +1,142 @@
+theory cas1
+  imports Main 
+
+begin
+
+(*
+  1 + 2 + 3 + ... + n = n * (n+1) / 2
+  0 + 1 + 2 + 3 + ... + 
+*)
+
+lemma 
+  fixes n :: nat
+  shows "\<Sum> {0..<n+1} = (n * (n + 1)) div 2"
+proof (induction n)
+  case 0
+  show ?case 
+    by auto
+
+next 
+  case (Suc n)
+  note IH = this 
+
+  have "\<Sum>{0..<Suc n+1} = \<Sum> ({0..<n+1} \<union> {n+1})" by auto 
+  also have "... = \<Sum>{0..<n+1} + (n+1)" by auto 
+  also have "... = (n * (n + 1)) div 2 + (n + 1)" using IH by auto 
+  also have "... = (n * (n + 1)) div 2 + 2*(n + 1) div 2" by auto 
+  also have "... = ((n + 1) * (n + 2)) div 2" by auto 
+  finally  show ?case 
+    by auto
+qed
+
+primrec suma_n :: "nat \<Rightarrow> nat" where 
+  "suma_n 0 = 0"
+| "suma_n (Suc n) = suma_n n + Suc n"
+
+value "suma_n 5"
+
+lemma "suma_n n = n * (n + 1) div 2"
+proof (induction n)
+
+  case 0 
+  show ?case 
+    by simp
+
+next 
+  case (Suc n)
+  note IH = this
+
+  have "suma_n (Suc n) = suma_n n + Suc n" by simp 
+  also have "... = (n * (n + 1)) div 2 + Suc n" using IH by simp 
+  also have "... = (n * (n + 1)) div 2 + 2 * (Suc n) div 2" by simp 
+  also have "... = ((n + 1) * (n + 2)) div 2" by simp 
+  finally  show ?case 
+    by simp
+qed 
+
+
+(*
+  1*1 + 2*2 + 3*3 + ... + n*n = (n * (n+1) * (2*n + 1))/6
+*)
+
+primrec sum_n21 :: "nat \<Rightarrow> nat" where 
+  "sum_n21 0 = 0"
+| "sum_n21 (Suc n) = sum_n21 n + (Suc n)*(Suc n )"
+
+primrec sum_n2 :: "nat \<Rightarrow> nat" where 
+  "sum_n2 0 = 0"
+| "sum_n2 (Suc n) = sum_n2 n + (Suc n) * (Suc n)"
+
+value "suma_n2 3"
+
+value "let n = 5 in ((\<Sum> i = (0::nat)..n. i^2) = (n * (n + 1) * (2*n + 1)) div 6)"
+
+lemma 
+  fixes i n:: nat 
+  shows "(\<Sum> i = 0..<(n+1). i^2) = (n * (n + 1) * (2*n + 1)) div 6"
+proof (induction n)
+
+  case 0
+  show ?case 
+    by simp
+next 
+  case (Suc n)
+  note IH = this 
+
+  have "(\<Sum> i = 0..<(Suc (n+1)). i^2) = (\<Sum> i = 0..<n+1. i^2) + (n+1)" sorry 
+
+
+  show ?case 
+    sorry
+qed
+
+fun quick_sort1 :: "nat list \<Rightarrow> nat list" where 
+  "quick_sort1 [] = []"
+| "quick_sort1 (pivot # xs) = quick_sort1 [x \<leftarrow> xs. x \<le> pivot] @ [pivot] @ quick_sort1 [x \<leftarrow> xs. x > pivot]"
+
+value "quick_sort1 [5, 1, 20, 3, 100, 33, 0]"
+
+(* --------------------------------------------------------------- *)
+
+type_synonym mat2 = "nat \<times> nat \<times> nat \<times> nat" 
+term "(1, 0, 0, 1)::mat2"
+
+definition eye :: "mat2" where 
+  "eye \<equiv> (1, 0, 0, 1)"
+
+fun mat_mul :: "mat2 \<Rightarrow> mat2 \<Rightarrow> mat2" where 
+  "mat_mul (a1,b1,c1,d1) (a2,b2,c2,d2) = (a1*a2+b1*c2, a1*b2+b1*d2, c1*a2+d1*c2, c1*b2+d1*d2)"
+
+fun mat_pow :: "mat2 \<Rightarrow> nat \<Rightarrow> mat2" where 
+  "mat_pow M 0 = eye"
+| "mat_pow M (Suc n) = mat_mul M (mat_pow M n)"
+
+value "mat_pow (1,2,3,4) 2"
+
+lemma "mat_pow (1, 1, 0, 1) n = (1, n, 0, 1)"
+  by (induction n) (auto simp add: eye_def)
+
+lemma "mat_pow (1, 1, 0, 1) n = (1, n, 0 , 1)"
+proof (induction n)
+
+  case 0
+  show ?case 
+    by (simp add: eye_def)
+
+next 
+  case (Suc n)
+  note IH = this
+
+  have "mat_pow (1, 1, 0, 1) (Suc n) = mat_mul (mat_pow (1, 1, 0, 1) n) (1, 1, 0, 1)" 
+    using Suc add.right_neutral add_0 add_Suc_right mat_pow.simps(2) by auto
+  also have "... = mat_mul (1, n, 0, 1) (1, 1, 0, 1)"
+    using IH
+    by auto 
+  also have "... = (1, n+1, 0, 1)" by auto
+  also have "... = (1, Suc n, 0, 1)" by auto
+  finally show ?case 
+    by auto
+qed
+
+
+end

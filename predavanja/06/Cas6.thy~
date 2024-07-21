@@ -1,0 +1,36 @@
+theory Cas6 
+  imports Main
+
+begin 
+
+definition three :: "nat" where "three = 3"
+
+(*relacije*)
+
+
+lemma 
+  assumes sim: "\<forall> x y. \<rho> x y \<longrightarrow> \<rho> y x" and 
+          trans: "\<forall> x y z. \<rho> x y \<and> \<rho> y z \<longrightarrow> \<rho> x z" and 
+          ex: "\<forall> x. \<exists> y. \<rho> x y"
+  shows "\<forall> x. \<rho> x x"
+proof 
+  fix x 
+  obtain y where "\<rho> x y"
+    using ex 
+    by auto 
+
+  moreover
+
+  then have "\<rho> x y \<longrightarrow> \<rho> y x"
+    using sim 
+    by auto 
+
+  ultimately
+
+  show "\<rho> x x"
+    by auto
+qed
+
+
+
+end

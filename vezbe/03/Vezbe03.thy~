@@ -15,51 +15,62 @@ text \<open>Diskutovati o pravilima uvođenja i pravilima eliminacije prirodne d
 text \<open>Uvodjenje konjukcije: \<open>conjI\<close>\<close>
 
 lemma "A \<and> B"
+  (*thm conjI*)
+  apply (rule conjI)
   (*<*) oops (*>*)
 
 text \<open>Uvodjenje disjunkcije: \<open>disjI1\<close>/\<open>disjI2\<close>\<close>
 
 lemma "A \<or> B"
+  apply (rule disjI1) (*da vazi samo A*)
   (*<*) oops (*>*)
 
 text \<open>Uvodjenje implikacije: \<open>impI\<close>\<close>
 
 lemma "A \<longrightarrow> B"
+  apply (rule impI)
   (*<*) oops (*>*)
 
 text \<open>Uvodjenje ekvivalencije: \<open>iffI\<close>\<close>
 
 lemma "A \<longleftrightarrow> B"
+  apply (rule iffI)
   (*<*) oops (*>*)
 
 text \<open>Uvodjenje negacije: \<open>notI\<close>\<close>
 
 lemma "\<not> A"
+  apply (rule notI)
   (*<*) oops (*>*)
 
 text \<open>Eliminacija konjukcije. \<open>conjE\<close>\<close>
 
 lemma "A \<and> B \<Longrightarrow> C"
+  apply (erule conjE)
   (*<*) oops (*>*)
 
 text \<open>Eliminacija disjunkcije. \<open>disjE\<close>\<close>
 
 lemma "A \<or> B \<Longrightarrow> C"
+  apply (erule disjE)
   (*<*) oops (*>*)
 
 text \<open>Eliminacija implikacije. \<open>impE\<close>\<close>
 
 lemma "A \<longrightarrow> B \<Longrightarrow> C"
+  apply (erule impE)
   (*<*) oops (*>*)
 
 text \<open>Eliminacija ekvivalencije. \<open>iffE\<close>\<close>
 
 lemma "A \<longleftrightarrow> B \<Longrightarrow> C"
+  apply (erule iffE)
   (*<*) oops (*>*)
 
 text \<open>Eliminacija negacije. \<open>notE\<close>\<close>
 
 lemma "\<not> A \<Longrightarrow> B" 
+  apply (erule notE)
   (*<*) oops (*>*)
 
 text_raw \<open> \end{exercise} \<close>
@@ -70,30 +81,92 @@ text \<open>Pokazati da su sledeće formule tautologija u iskaznoj logici.
       Dozvoljeno je korišćenje samo intuicionističkih pravila prirodne dedukcije.\<close>
 
 lemma "A \<and> B \<longrightarrow> B \<and> A"
+  apply (rule impI)
+  apply (rule conjI)
+   apply (erule conjE)
+   apply assumption
+  apply (erule conjE)
+  apply assumption
   (*<*) oops (*>*)
 
 lemma "A \<or> B \<longrightarrow> B \<or> A"
+  apply (rule impI)
+  apply (erule disjE)
+   apply (rule disjI2)
+   apply assumption
+  apply (rule disjI1)
+  apply assumption
   (*<*) oops (*>*)
 
 lemma "A \<and> B \<longrightarrow> A \<or> B"
+  apply (rule impI)
+  apply (rule disjI1) 
+  apply (erule conjE)
+  apply assumption
   (*<*) oops (*>*)
 
 lemma "(A \<and> B \<longrightarrow> C) \<longrightarrow> (A \<longrightarrow> (B \<longrightarrow> C))"
+  apply (rule impI)
+  apply (rule impI)
+  apply (rule impI)
+  apply (erule impE)
+   apply (rule conjI)
+    apply assumption  
+   apply assumption
+  apply assumption
   (*<*) oops (*>*)
 
 lemma "(A \<longrightarrow> (B \<longrightarrow> C)) \<longrightarrow> (A \<and> B \<longrightarrow> C)"
+  apply (rule impI)
+  apply (rule impI)
+  apply (erule impE)
+   apply (erule conjE)
+   apply assumption
+  apply (erule impE)
+   apply (erule conjE)
+   apply assumption
+  apply (erule conjE)
+  apply assumption
   (*<*) oops (*>*)
 
 lemma "\<not> (A \<or> B) \<longrightarrow> \<not> A \<and> \<not> B"
+  apply (rule impI)
+  apply (rule conjI)
+   apply (rule notI)
+   apply (erule notE)
+   apply (rule disjI1)
+   apply assumption
+  apply (rule notI)
+  apply (erule notE)
+  apply (rule disjI2)
+  apply assumption
   (*<*) oops (*>*)
 
 lemma "\<not> A \<and> \<not> B \<longrightarrow> \<not> (A \<or> B)"
+  apply (rule impI)
+  apply (rule notI)
+  apply (erule conjE)
+  apply (erule disjE)
+ 
   (*<*) oops (*>*)
 
 lemma "\<not> (A \<longleftrightarrow> \<not> A)"
+  apply (rule notI)
+  apply (erule iffE)
+  apply (erule impE) back
+   apply (rule notI)
+   apply (erule impE)
+    apply (assumption)
+   apply (erule notE)
+   apply assumption
+  apply (erule impE)
+   apply assumption
+  apply (erule notE)
+  apply assumption
+
   (*<*) oops (*>*)
 
-text \<open>Dodatni primeri:\<close>
+  text \<open>Dodatni primeri:\<close>
 
 lemma "(Q \<longrightarrow> R) \<and> (R \<longrightarrow> P \<and> Q) \<and> (P \<longrightarrow> Q \<or> R) \<longrightarrow> (P \<longleftrightarrow> Q)"
   (*<*) oops (*>*)
@@ -152,21 +225,25 @@ text \<open>Za logiku prvog reda pored pravila prirodne dedukcije iskazne
 text \<open>Uvođenje univerzalnog kvantifikatora: \<open>allI\<close>\<close>
 
 lemma "\<forall> x. P x"
+  apply (rule allI)
   (*<*) oops (*>*)
 
 text \<open>Eliminacija univerzalnog kvantifikatora: \<open>allE\<close>\<close>
 
 lemma "\<forall> x. P x \<Longrightarrow> A"
+  apply (erule_tac x="t" in allE)
   (*<*) oops (*>*)
 
 text \<open>Uvođenje egzistencijalnog kvantifikatora: \<open>exI\<close>\<close>
 
 lemma "\<exists> x. P x"
+  apply (rule_tac x="t" in exI)
   (*<*) oops (*>*)
 
 text \<open>Eliminacija egzistencijalnog kvantifikatora: \<open>exE\<close>\<close>
 
 lemma "\<exists> x. P x \<Longrightarrow> A"
+  apply (erule exE)
   (*<*) oops (*>*)
 
 text_raw \<open> \end{exercise} \<close>
@@ -177,9 +254,19 @@ text \<open>Pokazati da su sledeće formule valjane u logici prvog reda.
       Dozvoljeno je korišćenje samo intuicionističkih pravila prirodne dedukcije.\<close>
 
 lemma "(\<forall> x. Man x \<longrightarrow> Mortal x) \<and> Man Socrates \<longrightarrow> Mortal Socrates"
+  apply (rule impI)
+  apply (erule conjE)
+  apply (erule_tac x="Socrates" in allE)
+  apply (erule impE)
+   apply assumption
+  apply assumption
   (*<*) oops (*>*)
 
 lemma de_Morgan_1: "(\<exists> x. \<not> P x) \<longrightarrow> \<not> (\<forall> x. P x)"
+  apply (rule impI)
+  apply (erule exE)
+  apply (erule notE)
+  
   (*<*) oops (*>*)
 
 lemma de_Morgan_2: "(\<forall> x. \<not> P x) \<longrightarrow> (\<nexists> x. P x)"
@@ -193,9 +280,22 @@ lemma "(\<exists> x. P x) \<and> (\<forall> x. P x \<longrightarrow> Q x) \<long
 
 text \<open>Dodatni primeri:\<close>
 
+definition symetric where
+  "symetric R \<equiv> (\<forall> x y. R x y \<longleftrightarrow> R y x)"
+
 lemma "(\<forall> m. Man m \<longrightarrow> Mortal m) \<and> 
        (\<forall> g. Greek g \<longrightarrow> Man g) \<longrightarrow>
        (\<forall> a. Greek a \<longrightarrow> Mortal a)"
+  apply (rule impI)
+  apply (erule conjE)
+(* allE - nije bezbedno  or allI - bezbedno *)
+  apply (rule allI)
+  apply (erule_tac x="a" in allE)
+  apply (erule impE)
+   apply (erule_tac x="a" in allE)
+   apply (erule impE)
+  
+
   (*<*) oops (*>*)
 
 lemma "(\<forall> a. P a \<longrightarrow> Q a) \<and> (\<forall> b. P b) \<longrightarrow> (\<forall> x. Q x)"
@@ -234,21 +334,54 @@ text \<open>Diskutovati zašto sledeće tvrđenje može biti dokazano samo intui
       prirodne dedukcije, dok to ne važi za tvrđenje nakon njega. Primetiti razliku između 
       pravila \<open>notI\<close> i \<open>ccontr\<close>.\<close>
 
+(*
+definition ime_def where
+  "ime_def ... \<equiv> ..." *)
+
 lemma \<open>A \<longrightarrow> \<not> \<not> A\<close>
+  apply (rule impI)
+  apply (rule notI)
+  apply (erule notE)
+  apply assumption
   (*<*) oops (*>*)
 
 lemma "\<not> \<not> A \<longrightarrow> A"
+  apply (rule impI)
+  apply (rule ccontr)
+  apply (erule notE)
+  apply assumption  
   (*<*) oops (*>*)
 
 text \<open>Dokazati sledeća tvrđenja:\<close>
 
 lemma "(\<not> P \<longrightarrow> P) \<longrightarrow> P"
+  apply (rule impI)
+  apply (rule ccontr)
+  apply (erule impE)
+   apply assumption
+  apply (erule notE)
+  apply assumption
   (*<*) oops (*>*)
 
 lemma "\<not> (A \<and> B) \<longrightarrow> \<not> A \<or> \<not> B"
+  apply (rule impI)
+  apply (rule ccontr)
+  apply (erule notE)
+  apply (rule conjI)
+  apply (rule ccontr)
+   apply (erule notE)
+   apply (rule disjI1)
+   apply assumption
+  apply (rule ccontr)
+  apply (erule notE)
+  apply (rule disjI2)
+  apply assumption
   (*<*) oops (*>*)
 
 lemma "(\<not> (\<forall> x. P x)) \<longrightarrow> (\<exists> x. \<not> P x)"
+  apply (rule impI)
+  apply (rule_tac x="x" in exI)
+  apply (erule notE)
   (*<*) oops (*>*)
 
 text \<open>Dodatni primeri:\<close>
@@ -275,15 +408,56 @@ text \<open>Pokazati naredna tvrđenja pomoću pravila \<open>classical\<close>.
 thm classical
 
 lemma "P \<or> \<not> P"
-  (*<*) oops (*>*)
-
+  (*apply (rule classical)
+  apply (rule disjI1)
+  apply (rule classical)
+  apply (erule notE)
+  apply (rule disjI2)
+  apply assumption
+  done
+*)
+  apply (cases P)
+   apply (rule disjI1)
+   apply assumption 
+  apply (rule disjI2)
+  apply assumption
+  done
+  
 lemma "(A \<longleftrightarrow> (A \<longleftrightarrow> B)) \<longrightarrow> B"
+  apply (rule impI)
+  apply (cases A)
+   apply (erule iffE)
+   apply (erule impE)
+    apply assumption
+   apply (erule iffE)
+   apply (erule impE) back 
+    apply assumption +
+  apply (rule ccontr)
+  apply (erule iffE)
+  apply (erule impE) back 
+  apply (rule iffI)
+  apply (erule impE)
+  apply assumption
+  apply (erule iffE)
+    apply (erule impE) 
+     apply assumption +
+   apply (erule notE) back 
+   apply assumption 
+  apply (erule impE)
+   apply (erule notE)
+   apply assumption
+
   (*<*) oops (*>*)
 
 text \<open>\<open>Paradoks pijanca\<close>:\\
       Postoji osoba za koju važi, ako je on pijanac onda su i svi ostali pijanci.\<close>
 
 lemma drinker's_paradox: "\<exists> x. drunk x \<longrightarrow> (\<forall> x. drunk x)"
+  apply (cases "\<forall>x. drunk x")
+   apply (rule exI)
+   apply (rule impI)
+   apply assumption
+
   (*<*) oops (*>*)
 
 text_raw \<open> \end{exercise} \<close>

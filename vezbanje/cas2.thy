@@ -1,0 +1,183 @@
+theory cas2
+  imports Main
+
+begin 
+
+type_synonym mat2 = "nat \<times> nat \<times> nat \<times> nat"
+
+term "(1,0,0,1)::mat2"
+
+definition eye :: "mat2" where 
+  "eye \<equiv> (1, 0, 0, 1)"
+
+fun mat_mul :: "mat2 \<Rightarrow> mat2 \<Rightarrow> mat2" where 
+  "mat_mul (a1,b1,c1,d1) (a2,b2,c2,d2) = (a1*a1+b1*c2, a1*b2+b1*d2, c1*a2+d1*c2, c1*b2+d1*d2)"
+
+fun mat_pow :: "mat2 \<Rightarrow> nat \<Rightarrow> mat2" where 
+  "mat_pow M 0 = eye"
+| "mat_pow M (Suc n) = mat_mul (mat_pow M n) M"
+
+lemma "mat_pow (1, 1, 0, 1) n = (1, n, 0, 1)"
+  by (induction n) (auto simp add: eye_def)
+
+lemma "mat_pow (1, 1, 0, 1) n = (1, n, 0, 1)"
+proof (induction n)
+  case 0
+  then show ?case
+    by (simp add: eye_def)
+
+next
+  case (Suc n)
+  note IH = this
+
+  have "mat_pow (1, 1, 0, 1) (Suc n) = mat_mul (mat_pow (1, 1, 0, 1) n) (1, 1, 0, 1)" by simp
+  also have "... = mat_mul (1, n, 0, 1) (1, 1, 0, 1)" using IH by simp
+  also have "... = (1, n+1, 0, 1)" by simp
+  also have "... = (1, Suc n, 0, 1)" by simp
+  finally  show ?case by simp 
+qed
+
+(* ------------------ suma alternirajucih ------------------------- *)
+
+(*
+  -1 + 3 - 5 + ... + (-1)^n (2*n - 1) = (-1)^n n
+
+*)
+
+primrec suma_alt :: "nat \<Rightarrow> int" where 
+  "suma_alt 0 = 0"
+| "suma_alt (Suc n) = suma_alt n + (-1)^(Suc n) * (2 * int (Suc n) - 1)"
+
+value "suma_alt 6"
+
+lemma "suma_alt n = (-1)^n * (int n)"
+  by (induction n) (auto simp add: algebra_simps)
+
+lemma "suma_alt n = (-1)^n * (int n)"
+proof (induction n)
+  case 0
+  then show ?case by (simp add: algebra_simps)
+
+next
+  case (Suc n)
+  note IH = this
+
+  have "suma_alt (Suc n) = suma_alt n + (-1)^(Suc n) * (2 * int (Suc n) - 1)" by (rule suma_alt.simps(2))
+  also have "... = (-1)^n * int n + (-1)^(n + 1) * (2 * int (n + 1) - 1)" using IH by simp  
+  also have "... = (-1)^n *(-1)*(-1)*(int n) + (-1)^(n + 1) * (2 * (n + 1) - 1)" by simp
+  also have "... = (-1)^(n+1) * (-1)*n + (-1)^(n+1) * (2 * n + 2 - 1)" by simp 
+  also have "... = (-1)^n * (int n) - (-1)^n * (int (2*n + 1))" by simp
+  also have "... = (-1)^n * (int n - (2 * n + 1))"   
+    find_theorems "_ * (_ - _)"
+  then show ?case sorry
+qed
+
+(* ----------------------------------------------------------------------------------------------- *)
+
+lemma 
+  fixes n :: nat
+  shows "(6::nat) dvd n * (n + 1) * (2*n + 1)"
+proof (induction n)
+  case 0
+  then show ?case by simp
+
+next
+  case (Suc n)
+  note IH = this
+  then show ?case 
+  proof - 
+    note [simp] = algebra_simps
+    have "(Suc n) * (Suc n + 1) * (2 * (Suc n) + 1) = (n + 1) * (n + 2) * (2*n + 3)" by simp
+    also have "... = n * (n + 1) * (2*n + 3) + 2 * (n + 1) * (2*n + 3)" by simp 
+    also have "... = n * (n + 1) * (2*n + 1) + 2 * n * (n + 1) + 2 * (n + 1) * (2*n + 3)" by simp
+    also have "... = n * (n + 1) * (2*n + 1) + 2 * (n + 1) * (3*n + 3)" by simp 
+    also have "... = n * (n + 1) * (2*n + 1) + 6 * (n + 1) * (n + 1)" by simp 
+    finally show ?thesis using IH by (simp del: algebra_simps One_nat_def)
+  qed
+qed
+
+lemma
+  fixes n:: nat 
+  assumes "n \<ge> 3"
+  shows "n^2 > 2*n + 1"
+  using assms 
+proof (induction n rule: nat_induct_at_least)
+  case base
+  then show ?case by simp
+next
+  case (Suc n)
+  note IH = this 
+
+  have "2 * (Suc n) + 1 < 2 * (Suc n) + 2 * n"
+    using \<open>n \<ge> 3\<close> by simp 
+
+  also have "... = 2*n +1 + 2*n + 1" by simp
+  also have "... < n^2 + 2*n + 1" using IH by simp 
+  also have "... = (Suc n)^2" by (simp add: power2_eq_square)
+  finally show ?case .
+qed
+
+lemma 
+  fixes n :: nat
+  assumes "n \<ge> 3"
+  shows "n^2 > 2*n + 1"
+  using assms
+proof (induction n rule: nat_induct_at_least)
+  case base
+  then show ?case by simp
+
+next
+  case (Suc n)
+  note IH = this
+
+  have "2 * (Suc n) + 1 < 4*n + 2" using \<open>n \<ge> 3\<close> by simp
+  also have "... < n^2 + 2*n + 1" using IH by simp
+  also have "... = (Suc n)^2" by (simp add: power2_eq_square)
+  finally show ?case .
+qed
+
+lemma 
+  fixes n:: nat
+  shows "6 dvd (n * (n + 1) * (2*n + 1))"
+proof (induction n)
+  case 0
+  then show ?case by simp
+next
+  case (Suc n)
+  note IH = this 
+  then show ?case 
+  proof - 
+    note [simp] = algebra_simps
+    have "(Suc n) * (Suc n + 1) * (2 * (Suc n) + 1) = (n + 1) * (n + 1 + 1) * (2*n + 2 + 1)" by simp
+    also have "... = (n + 1) * (n + 2) * (2*n + 3)" by simp 
+    also have "... = n * (n + 1) * (2*n + 3) + 2 * (n + 1) * (2*n + 3)" by auto 
+    also have "... = n * (n + 1) * (2*n + 1) + 2 * n * (n + 1) + 2 * (n + 1) * (2*n + 3)" by simp 
+    also have "... = n * (n + 1) * (2*n + 1) + 2 * (n + 1) * (n + 2 * n + 3)" by simp 
+    also have "... = n * (n + 1) * (2*n + 1) + 2 * (n + 1) * (3*n + 3)" by simp 
+    also have "... = n * (n + 1) * (2*n + 1) + 6 * (n + 1) * (n + 1)" by simp 
+    finally show ?thesis using IH by (simp del: algebra_simps One_nat_def)
+  qed 
+qed
+
+lemma 
+  fixes n:: nat
+  shows "11 dvd (6^(2*n) + 3^(n+2) + 3^n)"
+proof (induction n)
+  case 0
+  show ?case by auto
+
+next
+  case (Suc n)
+  note IH = this
+
+  have "6^(2 * (Suc n)) + 3^(Suc n + 2) + 3^(Suc n) = 6^(2 *n + 2) + 3^(n + 1 + 2) + 3^(n + 1)" by simp 
+  also have "... = 6^2 * 6^(2*n) + 3 * 3^(n + 2) + 3 * 3^n" by (simp add: power_add power_mult_distrib)
+
+
+  then show ?case sorry
+qed
+
+
+
+
+end
