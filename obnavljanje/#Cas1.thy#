@@ -1,0 +1,127 @@
+theory Cas1 
+  imports Main 
+
+begin 
+
+lemma "(x::nat) + y = y + x"
+  by simp
+
+lemma "((x::nat) + y) + z = x + (y + z)"
+  by simp 
+
+definition sledbenik :: "nat \<Rightarrow> nat"
+  where "sledbenik x = x + 1"
+
+lemma "sledbenik (sledbenik x) = x + 2"
+  unfolding sledbenik_def 
+  by simp 
+
+lemma "x > 0 \<longrightarrow> sledbenik x > 1"
+  unfolding sledbenik_def
+  by simp 
+
+lemma "x < 5 \<longrightarrow> sledbenik x < 6"
+  unfolding sledbenik_def
+  by simp
+
+lemma 
+  fixes a b::nat 
+  assumes "a < x" "x < b"
+  shows "a + 1 < sledbenik x \<and> sledbenik x < b + 1" 
+  unfolding sledbenik_def
+  using assms
+  by simp 
+
+definition kvadrat:: "nat \<Rightarrow> nat" 
+  where "kvadrat x = x*x"
+
+lemma "kvadrat (x+1) = kvadrat x + 2*x + 1"
+  unfolding kvadrat_def 
+  by simp
+
+fun sum:: "nat list \<Rightarrow> nat" 
+  where "sum [] = 0"
+  | "sum (x#xs) = x + sum xs" 
+
+lemma "sum xs = foldr (+) xs 0" 
+  by (induction xs) auto
+
+lemma "sum (xs @ ys) = sum xs + sum ys"
+  by (induction xs) auto
+
+fun len:: "nat list \<Rightarrow> nat"
+  where "len [] = 0"
+  | "len (x#xs) = 1 + len xs"
+
+lemma "len xs = foldr (\<lambda>x. (+) 1) xs 0"
+  by (induction xs) auto 
+
+lemma "len (xs @ ys) = len xs + len ys"
+  by (induction xs) auto
+
+lemma "A \<and> B \<longrightarrow> B \<and> A"
+  by simp
+
+lemma "A \<or> B \<longrightarrow> B \<or> A"
+  by simp 
+
+(*
+Ako onaj ko laže taj i krade i ako bar neko laže, onda neko i krade.
+
+laze(x) = x laze
+krade(x) = x krade
+
+(\<forall>x. laze x \<and> krade x) \<and> (\<exists>x. laze x) \<longrightarrow> \<exists>x. krade x 
+
+*)
+
+lemma "(\<forall>x. laze x \<and> krade x) \<and> (\<exists>x. laze x) \<longrightarrow> (\<exists>x. krade x)"
+  by simp
+
+(*
+Ako ”ko radi taj ima ili troši” i ”ko ima taj peva” i ”ko troši taj peva”, onda ”ko radi taj
+peva”
+
+ima(x) = x ima 
+trosi(x) = x trosi 
+
+peva(x) = x peva 
+radi(x) = x radi 
+
+(\<forall>x. radi x \<longrightarrow>ima x \<or>  trosi x) \<and> (\<forall>x. ima x \<longrightarrow> peva x) \<and> (\<forall>x. trosi x \<longrightarrow> peva x) \<longrightarrow> (\<forall>x. radi x \<longrightarrow> peva x)
+
+*)
+
+lemma "(\<forall>x. radi x \<longrightarrow>ima x \<or>  trosi x) \<and> (\<forall>x. ima x \<longrightarrow> peva x) \<and> (\<forall>x. trosi x \<longrightarrow> peva x) \<longrightarrow> (\<forall>x. radi x \<longrightarrow> peva x)"
+  by auto
+
+(*
+(c.1) Ako je X prijatelj osobe Y, onda je i Y prijatelj osobe X.
+(c.2) Ako je X prijatelj osobe Y, onda X voli Y.
+(c.3) Ne postoji neko ko je povredio osobu koju voli.
+(c.4) Osoba Y je povredila svog prijatelja X
+
+prijatelj(x, y) = x je prijatelj y 
+voli(x, y) = x voli y 
+povredio(x, y) = x je povredio y
+
+\<forall>x y. prijatelj x y \<longrightarrow> prijatelj y x 
+\<forall>x y. prijatelj x y \<longrightarrow> voli x y 
+
+\<not>(\<exists>x y. povredio x y \<and> voli x y)
+\<exists>x y. prijatelj y x \<and> povredio y x
+\<longrightarrow> False
+
+
+*)
+
+lemma "(\<forall>x y. prijatelj x y \<longrightarrow> prijatelj y x) \<and> (\<forall>x y. prijatelj x y \<longrightarrow> voli x y) 
+  \<and> (\<not>(\<exists>x y. povredio x y \<and> voli x y)) \<and> (\<exists>x y. prijatelj y x \<and> povredio y x) \<longrightarrow> False"
+  by blast
+
+
+
+
+
+
+end
