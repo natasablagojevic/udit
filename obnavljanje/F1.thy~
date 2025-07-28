@@ -1,5 +1,5 @@
 theory F1
-  imports Main HOL.Real
+  imports Main
 
 begin 
 
@@ -119,53 +119,6 @@ next
     then show "y \<in> f ` ( A \<inter> B)" using \<open>f x1 = y\<close> by auto
   qed
 qed
-
-(* --------- BROOJEVI ------------*)
-
-term "3::nat"
-term "3::rat"
-
-(* div - celobrojno deljenje
-   mod - ostatak pri deljenju
-
-  obratiti paznju na oduzimanje na prirodnim brojevima
-
- nat: +,*,div, mod
- int, real: +,-,/
-*)
-
-(*
-  x * (y + z) = x * y + x * z
-
-  polja, grupe, prsteni
-*)
-
-
-find_theorems "(_::nat) * (_ + _) = _ * _ + _ * _"
-
-thm algebra_simps 
-thm field_simps (* deljenje *)
-
- (* by simp add: algebra_simps *)
-
-thm power2_eq_square
-
-lemma 
-  fixes x y :: real
-  shows "(x - y) * (x + y) = x^2 - y^2"
-  (*using [[show_types]]*)
-proof -
-  have "(x - y) * (x + y) = (x - y) * x + (x - y) * y" by (rule distrib_left) 
-  also have "... = (x * x - y * x) + (x - y) * y" by (subst left_diff_distrib, rule refl)
-  also have "... = (x * x - y * x) + (x * y - y * y)" by (subst left_diff_distrib, rule refl)
-  also have "... = (x * x - y * x + x * y) - y * y" by (rule add_diff_eq)
-  also have "... = (x * x - x * y + x * y) - y * y" by (subst mult.commute[of y x], rule refl)
-  also have "... = x * x - y * y" by (subst diff_add_cancel, rule refl)
-  finally show ?thesis by (subst power2_eq_square)+
-qed
-
-
-
 
 
 

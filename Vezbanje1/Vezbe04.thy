@@ -1,0 +1,162 @@
+
+(*<*)
+theory Vezbe04
+    imports Main
+begin
+(*>*)
+
+text_raw \<open>\begin{exercise}[subtitle=Algebra skupova]\<close>
+
+text \<open>Diskutovati o sledećim termovima:\<close>
+
+term "{1, 2, 3}"
+term "{1::nat, 2, 3}"
+term "(\<in>)"
+term "(\<inter>)"
+term "(\<union>) A"
+term "(A::'a set) - B"
+
+text_raw \<open> \end{exercise} \<close>
+
+
+text_raw \<open>\begin{exercise}[subtitle=Isar dokazi]\<close>
+
+text \<open>Pokazati sledeća tvrđenja o skupovima pomoću jezika Isar.\<close>
+
+text \<open>\<open>Napomena\<close>: Dozvoljeno je korišćenje samo \<open>simp\<close> metode za
+                  dokazivanje pojedinačnih koraka.\<close>
+
+lemma "- (A \<union> B) = - A \<inter> - B"
+proof
+  show "- (A \<union> B) \<subseteq> - A \<inter> - B"
+  proof
+    fix x
+    assume "x \<in> -(A \<union> B)"
+    then have "x \<notin> A \<union> B" by auto 
+    then have "x \<notin> A \<and> x \<notin> B" by auto 
+    then have "x \<in> -A \<and> x \<in> -B" by auto 
+    then show "x \<in> -A \<inter> -B" by auto 
+  qed
+next 
+  show "- A \<inter> - B \<subseteq> - (A \<union> B)"
+  proof
+    fix x
+    assume "x \<in> -A \<inter> -B"
+    then have "x \<in> -A \<and> x \<in> -B" by auto 
+    then have "x \<notin> A \<and> x \<notin> B" by auto 
+    then have "x \<notin> A \<union> B" by auto 
+    then show "x \<in> -(A \<union> B)" by auto 
+  qed
+qed
+
+text \<open>\<open>Savet\<close>: Iskoristiti @{text "find_theorems _ \<or> _ \<longleftrightarrow> _ \<or> _"} 
+               za pronalaženje odgovarajuće teoreme.\<close>
+
+lemma "A \<union> B = B \<union> A"
+proof
+  show "A \<union> B \<subseteq> B \<union> A"
+  proof
+    fix x
+    assume "x \<in> A \<union> B"
+    then have "x \<in> A \<or> x \<in> B" by auto 
+    then have "x \<in> B \<or> x \<in> A" by auto 
+    then show "x \<in> B \<union> A" by auto 
+  qed
+next
+  show "B \<union> A \<subseteq> A \<union> B"
+  proof
+    fix x
+    assume "x \<in> B \<union> A"
+    then have "x \<in> B \<or> x \<in> A" by auto 
+    then have "x \<in> A \<or> x \<in> B" by auto 
+    then show "x \<in> A \<union> B" by auto 
+  qed
+qed
+
+text \<open>\<open>Savet\<close>: Iskoristiti aksiomu isključenja trećeg @{text "A \<or> \<not>A"}
+               u kontekstu operacije pripadanja @{text "(\<in>) :: 'a \<Rightarrow> 'a set \<Rightarrow> bool"}.\<close>
+
+lemma "A \<union> (B \<inter> C) = (A \<union> B) \<inter> (A \<union> C)" (is "?left = ?right")
+proof
+  show "A \<union> (B \<inter> C) \<subseteq> (A \<union> B) \<inter> (A \<union> C)"
+  proof
+    fix x
+    assume "x \<in> A \<union> (B \<inter> C)"
+    then have "x \<in> A \<or> x \<in> B \<inter> C" by auto 
+    then have "x \<in> A \<or> (x \<in> B \<and> x \<in> C)" by auto 
+    then have "(x \<in> A \<or> x \<in> B) \<and> (x \<in> A \<or> x \<in> C)" by auto 
+    then have "x \<in> A \<union> B \<and> x \<in> A \<union> C" by auto 
+    then show "x \<in> (A \<union> B) \<inter> (A \<union> C)" by auto
+  qed
+next
+  show "(A \<union> B) \<inter> (A \<union> C) \<subseteq> A \<union> (B \<inter> C)"
+  proof
+    fix x
+    assume "x \<in> (A \<union> B) \<inter> (A \<union> C)"
+    then have "x \<in> (A \<union> B) \<and> x \<in> (A \<union> C)" by auto 
+    then have "(x \<in> A \<or> x \<in> B) \<and> (x \<in> A \<or> x \<in> C)" by auto 
+    then have "x \<in> A \<or> (x \<in> B \<and> x \<in> C)" by auto 
+    then have "x \<in> A \<or> x \<in> (B \<inter> C)" by auto 
+    then show "x \<in> A \<union> (B \<inter> C)" by auto 
+  qed
+qed
+
+lemma "A \<inter> (B \<union> C) = (A \<inter> B) \<union> (A \<inter> C)" (is "?left = ?right")
+proof
+  show "A \<inter> (B \<union> C) \<subseteq> (A \<inter> B) \<union> (A \<inter> C)"
+  proof
+    fix x
+    assume "x \<in> A \<inter> (B \<union> C)"
+    then have "x \<in> A \<and> x \<in> B \<union> C" by auto
+    then have "x \<in> A \<and> (x \<in> B \<or> x \<in> C)" by auto 
+    then have "(x \<in> A \<and> x \<in> B) \<or> (x \<in> A \<and> x \<in> C)" by auto 
+    then have "x \<in> A \<inter> B \<or> x \<in> A \<inter> C" by auto 
+    then show "x \<in> (A \<inter> B) \<union> (A \<inter> C)" by auto 
+  qed
+next 
+  show "(A \<inter> B) \<union> (A \<inter> C) \<subseteq> A \<inter> (B \<union> C)"
+  proof
+    fix x
+    assume "x \<in> (A \<inter> B) \<union> (A \<inter> C)"
+    then have "x \<in> (A \<inter> B) \<or> x \<in> (A \<inter> C)" by auto 
+    then have "(x \<in> A \<and> x \<in> B) \<or> (x \<in> A \<and> x \<in> C)" by auto 
+    then have "x \<in> A \<and> (x \<in> B \<or> x \<in> C)" by auto 
+    then have "x \<in> A \<and> x \<in> B \<union> C" by auto 
+    then show "x \<in> A \<inter> (B \<union> C)" by auto 
+  qed
+qed
+
+lemma "A - (B \<inter> C ) = (A - B) \<union> (A - C )" (is "?left = ?right")
+proof
+  show "A - (B \<inter> C) \<subseteq> (A - B) \<union> (A - C)"
+  proof
+    fix x 
+    assume "x \<in> A - (B \<inter> C)"
+    then have "x \<in> A \<and> x \<notin> B \<inter> C" by auto
+    then have "x \<in> A \<and> (x \<notin> B \<or> x \<notin> C)" by auto 
+    then have "x \<in> A \<and> (x \<in> -B \<or> x \<in> -C)" by auto 
+    then have "(x \<in> A \<and> x \<in> -B) \<or> (x \<in> A \<and> x \<in> -C)" by auto 
+    then have "(x \<in> A \<and> x \<notin> B) \<or> (x \<in> A \<and> x \<notin> C)" by auto 
+    then have "x \<in> A - B \<or> x \<in> A - C" by auto 
+    then show "x \<in> (A - B) \<union> (A - C)" by auto  
+  qed
+next 
+  show "(A - B) \<union> (A - C) \<subseteq> A - (B \<inter> C)"
+  proof
+    fix x
+    assume "x \<in> (A - B) \<union> (A - C)"
+    then have "x \<in> A - B \<or> x \<in> A - C" by auto 
+    then have "(x \<in> A \<and> x \<notin> B) \<or> (x \<in> A \<and> x \<notin> C)" by auto 
+    then have "(x \<in> A \<and> x \<in> -B) \<or> (x \<in> A \<and> x \<in> -C)" by auto 
+    then have "x \<in> A \<and> (x \<in> -B \<or> x \<in> -C)" by auto 
+    then have "x \<in> A \<and> (x \<notin> B \<or> x \<notin> C)" by auto 
+    then have "x \<in> A \<and> x \<notin> B \<inter> C" by auto 
+    then show "x \<in> A - (B \<inter> C)" by auto
+  qed
+qed
+
+text_raw \<open> \end{exercise} \<close>
+
+(*<*)
+end
+(*>*)

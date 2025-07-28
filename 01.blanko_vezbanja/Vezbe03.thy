@@ -15,62 +15,52 @@ text \<open>Diskutovati o pravilima uvođenja i pravilima eliminacije prirodne d
 text \<open>Uvodjenje konjukcije: \<open>conjI\<close>\<close>
 
 lemma "A \<and> B"
-  apply (rule conjI)
-  sorry
+  (*<*) oops (*>*)
 
 text \<open>Uvodjenje disjunkcije: \<open>disjI1\<close>/\<open>disjI2\<close>\<close>
 
 lemma "A \<or> B"
-  apply (rule disjI1)
-  sorry
+  (*<*) oops (*>*)
 
 text \<open>Uvodjenje implikacije: \<open>impI\<close>\<close>
 
 lemma "A \<longrightarrow> B"
-  apply (rule impI)
-  sorry 
+  (*<*) oops (*>*)
 
 text \<open>Uvodjenje ekvivalencije: \<open>iffI\<close>\<close>
 
 lemma "A \<longleftrightarrow> B"
-  apply (rule iffI)
-  sorry
+  (*<*) oops (*>*)
 
 text \<open>Uvodjenje negacije: \<open>notI\<close>\<close>
 
 lemma "\<not> A"
-  apply (rule notI)
-  sorry
+  (*<*) oops (*>*)
 
 text \<open>Eliminacija konjukcije. \<open>conjE\<close>\<close>
 
 lemma "A \<and> B \<Longrightarrow> C"
-  apply (rule conjE)
-  sorry
+  (*<*) oops (*>*)
 
 text \<open>Eliminacija disjunkcije. \<open>disjE\<close>\<close>
 
 lemma "A \<or> B \<Longrightarrow> C"
-  apply (erule disjE)
-  sorry
+  (*<*) oops (*>*)
 
 text \<open>Eliminacija implikacije. \<open>impE\<close>\<close>
 
 lemma "A \<longrightarrow> B \<Longrightarrow> C"
-  apply (erule impE)
-  sorry 
+  (*<*) oops (*>*)
 
 text \<open>Eliminacija ekvivalencije. \<open>iffE\<close>\<close>
 
 lemma "A \<longleftrightarrow> B \<Longrightarrow> C"
-  apply (erule iffE)
-  sorry 
+  (*<*) oops (*>*)
 
 text \<open>Eliminacija negacije. \<open>notE\<close>\<close>
 
 lemma "\<not> A \<Longrightarrow> B" 
-  apply (erule notE)
-  sorry 
+  (*<*) oops (*>*)
 
 text_raw \<open> \end{exercise} \<close>
 
@@ -80,64 +70,22 @@ text \<open>Pokazati da su sledeće formule tautologija u iskaznoj logici.
       Dozvoljeno je korišćenje samo intuicionističkih pravila prirodne dedukcije.\<close>
 
 lemma "A \<and> B \<longrightarrow> B \<and> A"
-  apply (rule impI)
-  apply (rule conjI)
-   apply (erule conjE)
-   apply assumption
-  apply (erule conjE)
-  apply assumption
-  done
+  (*<*) oops (*>*)
 
 lemma "A \<or> B \<longrightarrow> B \<or> A"
-  apply (rule impI)
-  apply (erule disjE)
-   apply (rule disjI2)
-   apply assumption
-  apply (rule disjI1)
-  apply assumption
-  done
+  (*<*) oops (*>*)
 
 lemma "A \<and> B \<longrightarrow> A \<or> B"
-  apply (rule impI)
-  apply (erule conjE)
-  apply (rule disjI1)
-  apply assumption
-  done
+  (*<*) oops (*>*)
 
 lemma "(A \<and> B \<longrightarrow> C) \<longrightarrow> (A \<longrightarrow> (B \<longrightarrow> C))"
-  apply (rule impI)+
-  apply (erule impE)
-   apply (rule conjI)
-    apply assumption 
-   apply assumption
-  apply assumption
-  done 
+  (*<*) oops (*>*)
 
 lemma "(A \<longrightarrow> (B \<longrightarrow> C)) \<longrightarrow> (A \<and> B \<longrightarrow> C)"
-  apply (rule impI)
-  apply (rule impI)
-  apply (erule impE)
-   apply (erule conjE)
-   apply assumption
-  apply (erule conjE)
-  apply (erule impE)
-   apply assumption
-  apply assumption
-  done 
+  (*<*) oops (*>*)
 
 lemma "\<not> (A \<or> B) \<longrightarrow> \<not> A \<and> \<not> B"
-  apply (rule impI)
-  apply (rule conjI)
-   apply (rule notI)
-   apply (erule notE)
-   apply (rule disjI1)
-   apply assumption
-  apply (rule notI)
-  apply(erule notE)
-  apply (rule disjI2)
-  apply assumption
-  done
-
+  (*<*) oops (*>*)
 
 lemma "\<not> A \<and> \<not> B \<longrightarrow> \<not> (A \<or> B)"
   (*<*) oops (*>*)

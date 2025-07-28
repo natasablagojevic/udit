@@ -117,31 +117,8 @@ lemma n2_2n:
   using assms
 (*<*) oops (*>*)
 
-
-primrec suma_x:: "nat \<Rightarrow> nat \<Rightarrow> nat"
-  where "suma_x 0 _ = 0" 
-  | "suma_x (Suc n) x = suma_x n x + (3*(Suc n) - 2) * x"
-
-lemma "suma_x n x = (n * (3*n - 1) * x) div 2"
-proof (induction n)
-  case 0
-  then show ?case by auto
-next
-  case (Suc n)
-  note IH = this
-
-  have "suma_x (Suc n) x = suma_x n x + (3*(Suc n) - 2)*x" by (simp add: algebra_simps)
-  also have "... = n*(3*n-1)*x div 2 + (3 * (Suc n) - 2) * x" using IH by (simp add: algebra_simps)
-  also have "... = n*(3*n-1)*x div 2 + (3*(n+1) - 2) * x" by (simp add: algebra_simps)
-  also have "... = n*(3*n-1)*x div 2 + (3*n + 1) * x" by (simp add: algebra_simps)
-  also have "... = n*(3*n-1)*x div 2 + 2*(3*n+1)*x div 2" by (simp add: algebra_simps)
-  also have "... = (n*(3*n-1)+2*(3*n+1))* x div 2" by auto
-  also have "... = (n+1) * (3*n+2) * x div 2" by (simp add: algebra_simps)
-  also have "... = (Suc n) * (3 * (Suc n) - 1) * x div 2" by (simp add: algebra_simps)
-  finally show ?case .
-qed
-
 text_raw \<open>\end{exercise}\<close>
+
 (*<*)
 end
 (*>*)

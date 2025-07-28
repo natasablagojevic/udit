@@ -1,0 +1,16 @@
+theory Cas7
+  imports Main
+
+begin
+
+lemma 
+  fixes n::nat 
+  shows "(3::nat) dvd ((5::nat)^n + 2^(n+1))"
+proof (induction n)
+  case 0
+  then show ?case by auto 
+qed
+
+
+
+end

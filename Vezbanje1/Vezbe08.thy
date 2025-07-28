@@ -1,6 +1,6 @@
 
 (*<*)
-theory Vezbe08 
+theory Vezbe08
     imports Main
 begin
 (*>*)
@@ -9,9 +9,7 @@ text_raw \<open>\begin{exercise}[subtitle=Zasnivanje prirodnih brojeva.]\<close>
 
 text \<open>Definisati algebarski tip podataka \<open>prirodni\<close> koji predstavlja prirodni broj.\<close>
 
-datatype prirodni = 
-  Nula 
-  | Sled prirodni
+datatype prirodni = undef
 
 text \<open>Diskutovati o tipu \<open>prirodni\<close> i sledećim termovima.\<close>
 
@@ -21,29 +19,23 @@ term "Nula"
 term "Sled Nula"
 term "Sled (Sled Nula)"
 
-(*
-  Algebraski tip = 
-  
-*)
-
 
 text \<open>Definisati skraćenice za prirodne brojeve \<open>\<one>, \<two>, \<three>\<close>.\<close>
 
 abbreviation jedan :: prirodni ("\<one>") where
-  "\<one> \<equiv> Sled Nula"
+  "\<one> \<equiv> undefined"
 
 abbreviation dva :: prirodni ("\<two>") where
-  "\<two> \<equiv> Sled jedan"
+  "\<two> \<equiv> undefined"
 
 abbreviation tri :: prirodni ("\<three>") where
-  "\<three> \<equiv> Sled (Sled (Sled Nula))"
+  "\<three> \<equiv> undefined"
 
 text \<open>Primitivnom rekurzijom definisati operaciju sabiranja. Uvesti levo 
       asocijativni operator \<open>\<oplus>\<close> za operaciju sabiranja.\<close>
 
 fun saberi (infixl "\<oplus>" 100) where
-  "Nula \<oplus> b = b"
-| "(Sled a) \<oplus> b = Sled (a \<oplus> b)"
+  "a \<oplus> b = undefined"
 
 text \<open>Testirati funkciju sabiranjem nekih skraćenica za prirodne brojeve.\<close>
 
@@ -51,19 +43,14 @@ text \<open>Pokazati da je sabiranje asocijativno.\<close>
 
 lemma saberi_asoc:
   shows "a \<oplus> (b \<oplus> c) = a \<oplus> b \<oplus> c"
-  by (induction a) auto
+  (*<*) oops (*>*)
 
 text \<open>Pokazati da je sabiranje komutativno.\\
      \<open>Savet\<close>: Potrebno je pokazati pomoćne lemu.\<close>
 
-lemma saberiKom [simp]:
-  "Sled (b \<oplus> a) = Sled (b) \<oplus> a"
-  apply (induction b)
-  by auto
-
 lemma saberi_kom:
   shows "a \<oplus> b = b \<oplus> a"
-  by (induction a) auto
+  (*<*) oops (*>*)
 
 lemma saberi_kom_isar:
   shows "a \<oplus> b = b \<oplus> a"
@@ -73,18 +60,14 @@ text \<open>Primitivnom rekurzijom definisati operaciju množenja. Uvesti levo
       asocijativni operator \<open>\<otimes>\<close> za operaciju množenja.\<close>
 
 fun pomnozi (infixl "\<otimes>" 101) where
-  "Nula \<otimes> b = Nula"
-| "(Sled a) \<otimes> b = (a \<otimes> b) \<oplus> b"
+  "a \<otimes> b = undefined"
 
 text \<open>Pokazati komutativnost množenja.\\
      \<open>Savet\<close>: Pokazati pomoćne lemme.\<close>
 
-lemma pomnoziKom [simp]:
-  "Sled (b \<otimes> a)" 
-
 lemma pomnozi_kom:
   shows "a \<otimes> b = b \<otimes> a"
-  by (induction a) auto
+  (*<*) oops (*>*)
 
 text \<open>Pokazati da je množenje asocijativno.\<close>
 

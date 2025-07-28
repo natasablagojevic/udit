@@ -1,0 +1,255 @@
+
+(*<*)
+theory Vezbe06
+    imports Main
+begin
+(*>*)
+
+text_raw \<open>\begin{exercise}[subtitle=Isar dokazi u logici prvog reda.]\<close>
+
+lemma 
+  assumes "(\<exists> x. P x)"
+      and "(\<forall> x. P x \<longrightarrow> Q x)"
+    shows "(\<exists> x. Q x)"
+proof -
+  from assms(1) obtain x where "P x" by auto 
+  from this assms(2) have "Q x" by auto 
+  from this show "\<exists>x. Q x" by auto 
+qed
+
+lemma
+  assumes "\<forall> c. Man c \<longrightarrow> Mortal c"
+      and "\<forall> g. Greek g \<longrightarrow> Man g"
+    shows "\<forall> a. Greek a \<longrightarrow> Mortal a"
+proof
+  fix x 
+  show "Greek x \<longrightarrow> Mortal x"
+  proof
+    assume "Greek x"
+    from this have "Man x" using assms(2) by auto 
+    from this show "Mortal x" using assms(1) by auto 
+  qed
+qed
+
+text \<open>Dodatni primer:\<close>
+
+text \<open>Ako svaki konj ima potkovice;\\
+      i ako ne postoji čovek koji ima potkovice;\\
+      i ako znamo da postoji makar jedan čovek;\\
+      dokazati da postoji čovek koji nije konj.\<close>
+
+lemma "(\<forall>x. konj x \<longrightarrow> potkovice x) \<and> (\<not>(\<exists>x. covek x \<and> potkovice x)) \<and> (\<exists>x. covek x) \<longrightarrow> (\<exists>x. covek x \<and> \<not> konj x)"
+  by auto 
+
+lemma 
+  assumes "\<forall>x. konj x \<longrightarrow> potkovice x"
+  assumes "\<not>(\<exists>x. covek x \<and> potkovice x)"
+  assumes "\<exists>x. covek x"
+  shows "\<exists>x. covek x \<and> \<not> konj x"
+proof -
+  from assms(3) obtain x where "covek x" by auto 
+  have "konj x \<or> \<not> konj x" by auto
+  from this have "covek x \<and> \<not> konj x" 
+  proof
+    assume "konj x"
+    show "covek x \<and> \<not> konj x"
+    proof
+      from \<open>covek x\<close> show "covek x" by auto         
+    next 
+      show "\<not> konj x"
+      proof
+        assume "konj x"
+        from this have "potkovice x" using assms(1) by auto 
+        from this \<open>covek x\<close> obtain x where "covek x \<and> potkovice x" by auto 
+        from this assms(2) show False by auto 
+      qed
+    qed
+  next 
+    assume "\<not> konj x"
+    from this \<open>covek x\<close> show "covek x \<and> \<not> konj x" by auto 
+  qed
+  from this show "\<exists>x. covek x \<and> \<not> konj x" by auto 
+qed
+
+
+lemma 
+  assumes "\<forall>x. kvadrat x \<longrightarrow> romb x"
+  assumes "\<forall>x. kvadrat x \<longrightarrow> pravougaonik x"
+  assumes "\<exists>x. kvadrat x"
+  shows "\<exists>x. romb x \<and> pravougaonik x"
+proof - 
+  from assms(3) obtain x where "kvadrat x" by auto 
+  from this have "romb x" using assms(1) by auto 
+  from \<open>kvadrat x\<close> have "pravougaonik x" using assms(2) by auto 
+  from this \<open>romb x\<close> have "romb x \<and> pravougaonik x" by auto 
+  from this show "\<exists>x. romb x \<and> pravougaonik x" by auto 
+qed
+
+lemma 
+  assumes "\<forall>x. \<not> paran x \<longrightarrow> neparan x"
+  assumes "\<forall>x. neparan x \<longrightarrow> \<not> paran x"
+  shows "\<forall>x. paran x \<or> neparan x"
+proof
+  fix x 
+  have "paran x \<or> \<not> paran x" by auto 
+  from this show "paran x \<or> neparan x"
+  proof
+    assume "paran x" 
+    from this show "paran x \<or> neparan x" by auto  
+  next 
+    assume "\<not> paran x"
+    from this assms(1) have "neparan x" by auto 
+    from this  show "paran x \<or> neparan x" by auto 
+  qed
+qed
+
+lemma
+  assumes "\<forall>x. \<not> paran x \<longrightarrow> nepran x"
+  assumes "\<forall>x. neparan x \<longrightarrow> \<not> paran x"
+  shows "\<forall>x. \<not>(paran x \<and> neparan x)"
+proof
+  fix x
+  show "\<not>(paran x \<and> neparan x)"
+  proof
+    assume "paran x \<and> neparan x"
+    from this have "paran x" "neparan x" by auto 
+    from \<open>neparan x\<close> have "\<not> paran x" using assms(2) by auto 
+    from this \<open>paran x\<close> show False by auto 
+  qed
+qed
+
+
+lemma 
+  assumes "\<forall>x. A x \<longrightarrow> \<not> B x"
+  shows "\<not>(\<exists>x. A x \<and> B x)"
+proof
+  assume "\<exists>x. A x \<and> B x"
+  from this obtain x where "A x \<and> B x" by auto 
+  from this have "A x" "B x" by auto 
+  from \<open>A x\<close> have "\<not> B x" using assms by auto 
+  from this \<open>B x\<close> show False by auto 
+qed
+
+lemma 
+  assumes "\<exists>x. A x \<or> B x"
+  shows "(\<exists>x. A x) \<or> (\<exists>x. B x)"
+proof -
+  from assms obtain x where "A x \<or> B x" by auto 
+  from this show "(\<exists>x. A x) \<or> (\<exists>x. B x)" 
+  proof
+    assume "A x"
+    from this obtain x where "A x" by auto 
+    from this  show "(\<exists>x. A x) \<or> (\<exists>x. B x)" by auto 
+  next 
+    assume "B x"
+    from this obtain x where "B x" by auto
+    from this show "(\<exists>x. A x) \<or> (\<exists>x. B x)" by auto 
+  qed
+qed
+
+lemma 
+  assumes "\<forall>a. P a \<longrightarrow> Q a"
+  assumes "\<forall>b. P b"
+  shows "\<forall>x. Q x"
+proof 
+  fix x
+  show "Q x"
+  proof -
+    from assms(2) have "P x" by auto 
+    from this assms(1) show "Q x" by auto 
+  qed
+qed 
+
+lemma 
+  assumes "\<forall>x. covek x \<longrightarrow> smrtan x"
+  assumes "\<forall>x. grk x \<longrightarrow> covek x"
+  shows "\<forall>x. grk x \<longrightarrow> smrtan x"
+proof
+  fix x
+  show "grk x \<longrightarrow> smrtan x"
+  proof
+    assume "grk x"
+    from this assms(2) have "covek x" by auto 
+    from this assms(1) show "smrtan x" by auto 
+  qed
+qed
+
+
+text_raw \<open>\end{exercise}\<close>
+
+text_raw \<open>\begin{exercise}[subtitle=Pravilo ccontr i classical.]\<close>
+
+text \<open>Dokazati u Isar jeziku naredna tvrđenja pomoću pravila \<open>ccontr\<close>.\<close>
+
+lemma "\<not> (A \<and> B) \<longrightarrow> \<not> A \<or> \<not> B"
+(*<*) oops (*>*)
+
+text \<open>Dodatni primer:\<close>
+
+lemma "((P \<longrightarrow> Q) \<longrightarrow> P) \<longrightarrow> P"
+(*<*) oops (*>*)
+
+text \<open>Dokazati u Isar jeziku naredna tvrđenja pomoću pravila \<open>classical\<close>.\<close>
+
+lemma "P \<or> \<not> P"
+(*<*) oops (*>*)
+
+text_raw \<open>\end{exercise}\<close>
+
+text_raw \<open>\begin{exercise}[subtitle=Logčki lavirinti.]\<close>
+
+text \<open>Svaka osoba daje potvrdan odgovor na pitanje: \<open>Da li si ti vitez?\<close>\<close>
+
+lemma no_one_admits_knave:
+  assumes "k \<longleftrightarrow> (k \<longleftrightarrow> ans)"
+    shows ans
+(*<*) oops (*>*)
+
+text \<open>Abercrombie je sreo tri stanovnika, koje ćemo zvati A, B i C. 
+      Pitao je A: Jesi li ti vitez ili podanik?
+      On je odgovorio, ali tako nejasno da Abercrombie nije mogao shvati 
+      što je rekao. 
+      Zatim je upitao B: Šta je rekao? 
+      B odgovori: Rekao je da je podanik.
+      U tom trenutku, C se ubacio i rekao: Ne verujte u to; to je laž! 
+      Je li C bio vitez ili podanik?\<close>
+
+lemma Smullyan_1_1:
+  assumes "kA \<longleftrightarrow> (kA \<longleftrightarrow> ansA)"
+      and "kB \<longleftrightarrow> \<not> ansA"
+      and "kC \<longleftrightarrow> \<not> kB"
+    shows kC
+(*<*) oops (*>*)
+
+text \<open>Abercrombie nije pitao A da li je on vitez ili podanik 
+      (jer bi unapred znao koji će odgovor dobiti), 
+      već je pitao A koliko od njih trojice su bili vitezovi. 
+      Opet je A odgovorio nejasno, pa je Abercrombie upitao B što je A rekao. 
+      B je tada rekao da je A rekao da su tačno njih dvojica podanici. 
+      Tada je, kao i prije, C tvrdio da B laže. 
+      Je li je sada moguće utvrditi da li je C vitez ili podanik?\<close>
+
+definition exactly_two :: "bool \<Rightarrow> bool \<Rightarrow> bool \<Rightarrow> bool" where
+  "exactly_two A B C \<longleftrightarrow> ((A \<and> B) \<or> (A \<and> C) \<or> (B \<and> C)) \<and> \<not> (A \<and> B \<and> C)"
+
+lemma Smullyan_1_2:
+  assumes "kB \<longleftrightarrow> (kA \<longleftrightarrow> exactly_two (\<not> kA) (\<not> kB) (\<not> kC))"
+      and "kC \<longleftrightarrow> \<not> kB"
+    shows "kC"
+(*<*) oops (*>*)
+
+text \<open>Abercrombie je sreo samo dva stanovnika A i B. 
+      A je izjavio: Obojica smo podanici. 
+      Da li možemo da zaključimo šta je A a šta je B?\<close>
+
+text \<open>Dodatni primer:\<close>
+
+lemma Smullyan_1_3:
+  "x"
+(*<*) oops (*>*)
+
+text_raw \<open>\end{exercise}\<close>
+
+(*<*)
+end
+(*>*)

@@ -98,35 +98,35 @@ next
 qed
 
 
-lemma 
-  fixes n::nat 
-  assumes "n \<ge> 5"
-  shows "(2::nat)^5 > n^2"
-  using assms
-proof (induction n rule: dec_induct)
-
-  case base
-  show ?case
-    by auto
-
-next 
-  case (step k)
-
-  then have "2^(k+1) > 2*k^2"
-    by auto
-
-  moreover 
-
-  have "(k+1)^2 < 2*k^2"
-    sorry
-
-
-  ultimately
-
-  show ?case 
-    by auto
-
-qed
+  lemma 
+    fixes n::nat 
+    assumes "n \<ge> 5"
+    shows "(2::nat)^5 > n^2"
+    using assms
+  proof (induction n rule: dec_induct)
+  
+    case base
+    show ?case
+      by auto
+  
+  next 
+    case (step k)
+  
+    then have "2^(k+1) > 2*k^2"
+      by auto
+  
+    moreover 
+  
+    have "(k+1)^2 < 2*k^2"
+      sorry
+  
+  
+    ultimately
+  
+    show ?case 
+      by auto
+  
+  qed
 
 (*rastuci lanac nejednakosti*)
 
