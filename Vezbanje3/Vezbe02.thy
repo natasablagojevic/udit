@@ -67,11 +67,50 @@ text \<open>P1: Svako ko je srećan voli da peva.\<close>
 text \<open>P2: Svako ko voli da peva, voli da pleše.\<close>
 text \<open>P3: Andrija je srećan.\<close>
 
+lemma 
+  assumes "\<forall>x. srecan x \<longrightarrow> peva x"
+  assumes "\<forall>x. peva x \<longrightarrow> plese x"
+  assumes "srecan Andrija"
+  shows "plese Andrija"
+  using assms 
+  by auto 
+
 text \<open>(b.2)\<close>
 text \<open>P:  Svako dete voli da se igra.\<close>
 text \<open>P1: Svaki dečak voli da se igra.\<close>
 text \<open>P2: Svaka devojčica voli da se igra.\<close> 
 text \<open>P3: Dete je dečak ili je devojčica.\<close>
+
+lemma 
+  assumes "\<forall>x. decak x \<longrightarrow> igra x"
+  assumes "\<forall>x. devojcica x \<longrightarrow> igra x"
+  assumes "\<forall>x. dete x \<longrightarrow> decak x \<or> devojcica x"
+  shows "\<forall>x. dete x \<longrightarrow> igra x"
+  using assms 
+  by auto
+
+lemma 
+  assumes "\<forall>x. decak x \<longrightarrow> igra x"
+  assumes "\<forall>x. devojcica x \<longrightarrow> igra x"
+  assumes "\<forall>x. dete x \<longrightarrow> decak x \<or> devojcica x"
+  shows "\<forall>x. dete x \<longrightarrow> igra x"
+proof
+  fix x 
+  show "dete x \<longrightarrow> igra x"
+  proof
+    assume "dete x" 
+    from this assms(3) have "decak x \<or> devojcica x" by auto
+    then show "igra x" 
+    proof
+      assume "decak x"
+      with assms(1) show "igra x" by auto
+    next 
+      assume "devojcica x"
+      with assms(2) show "igra x" by auto
+    qed
+  qed
+qed
+
 
 text \<open>(c) Na jeziku logike prvog reda zapisati sledeće rečenice i dokazati da su skupa nezadovoljive.\<close>
 
@@ -79,6 +118,15 @@ text \<open>- Svaka dva brata imaju zajedničkog roditelja.\<close>
 text \<open>- Roditelj je stariji od deteta.\<close>
 text \<open>- Postoje braća.\<close>
 text \<open>- Nijedna osoba nije starija od druge.\<close>
+
+lemma 
+  assumes "\<forall>x. \<forall>y. \<exists>z. brat x y \<longrightarrow> roditelj z x \<and> roditelj z y"
+  assumes "\<forall>x. \<forall>y. roditelj x y \<longrightarrow> starija x y"
+  assumes "\<exists>x. \<exists>y. brat x y"
+  assumes "\<not>(\<exists>x. \<exists>y. starija x y)"
+  shows False 
+  using assms 
+  by auto
 
 text_raw \<open>\end{exercise}\<close>
 

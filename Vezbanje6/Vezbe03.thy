@@ -27,11 +27,13 @@ lemma "A \<or> B"
 text \<open>Uvodjenje implikacije: \<open>impI\<close>\<close>
 
 lemma "A \<longrightarrow> B"
+  apply (rule impI)
   (*<*) oops (*>*)
 
 text \<open>Uvodjenje ekvivalencije: \<open>iffI\<close>\<close>
 
 lemma "A \<longleftrightarrow> B"
+  apply (rule iffI)
   (*<*) oops (*>*)
 
 text \<open>Uvodjenje negacije: \<open>notI\<close>\<close>
@@ -120,7 +122,7 @@ lemma "\<not> (A \<or> B) \<longrightarrow> \<not> A \<and> \<not> B"
   apply (rule notI)
   apply (erule notE)
   apply (rule disjI2)
-  apply assumption
+  apply assumption 
   done 
 
 lemma "\<not> A \<and> \<not> B \<longrightarrow> \<not> (A \<or> B)"
@@ -131,18 +133,18 @@ lemma "\<not> A \<and> \<not> B \<longrightarrow> \<not> (A \<or> B)"
    apply (erule notE)
    apply assumption
   apply (erule notE) back 
-  apply assumption 
+  apply assumption
   done 
 
 lemma "\<not> (A \<longleftrightarrow> \<not> A)"
   apply (rule notI)
   apply (erule iffE)
-  apply (erule impE) back 
-   apply (rule notI)
   apply (erule impE)
-    apply assumption 
+   apply (rule ccontr)
+   apply (erule impE)
+    apply assumption
    apply (erule notE)
-   apply assumption
+   apply assumption 
   apply (erule impE)
    apply assumption
   apply (erule notE)
@@ -155,20 +157,25 @@ lemma "(Q \<longrightarrow> R) \<and> (R \<longrightarrow> P \<and> Q) \<and> (P
   apply (rule impI)
   apply (erule conjE)+
   apply (rule iffI)
+   apply (rule ccontr)
    apply (erule impE) back back 
     apply assumption
    apply (erule disjE)
+    apply (erule impE)
+     apply assumption
+    apply (erule notE)
     apply assumption 
    apply (erule impE) back 
     apply assumption 
-   apply (erule conjE) 
-   apply assumption
+   apply (erule conjE)
+   apply (erule notE)
+   apply assumption 
   apply (erule impE) 
-   apply assumption
+   apply assumption 
   apply (erule impE)
    apply assumption
   apply (erule conjE)
-  apply assumption
+  apply assumption 
   done 
 
 lemma "(P \<longrightarrow> Q) \<and> (Q \<longrightarrow> R) \<longrightarrow> (P \<longrightarrow> Q \<and> R)"
@@ -177,15 +184,16 @@ lemma "(P \<longrightarrow> Q) \<and> (Q \<longrightarrow> R) \<longrightarrow> 
   apply (rule conjI)
    apply (erule impE)
     apply assumption+
-  apply (erule impE) back 
-   apply (erule impE)
-    apply assumption+
+  apply (erule impE)
+   apply assumption
+  apply (erule impE)
+   apply assumption+
   done 
 
 lemma "(P \<longrightarrow> Q) \<and> \<not> Q \<longrightarrow> \<not> P"
   apply (rule impI)
-  apply (rule notI)
   apply (erule conjE)
+  apply (rule notI)
   apply (erule impE)
    apply assumption
   apply (erule notE)
@@ -231,10 +239,9 @@ lemma "(A \<longrightarrow> C ) \<and> (B \<longrightarrow> \<not> C ) \<longrig
   apply (rule impI)
   apply (erule conjE)
   apply (rule notI)
-  apply (erule impE)
-   apply (erule conjE)
-   apply assumption
   apply (erule conjE)
+  apply (erule impE)
+   apply assumption
   apply (erule impE)
    apply assumption
   apply (erule notE)
@@ -246,7 +253,7 @@ lemma "(A \<and> B) \<longrightarrow> ((A \<longrightarrow> C ) \<longrightarrow
   apply (erule conjE)
   apply (rule notI)
   apply (erule impE)
-   apply (assumption)
+   apply assumption
   apply (erule impE)
    apply assumption
   apply (erule notE)
@@ -258,7 +265,9 @@ lemma "(A \<longleftrightarrow> B) \<longrightarrow> (\<not> A \<longleftrightar
   apply (erule iffE)
   apply (rule iffI)
    apply (rule notI)
-   apply (erule impE) back 
+   apply (erule impE)+
+     apply assumption+
+   apply (erule impE)
     apply assumption
    apply (erule notE)
    apply assumption
@@ -273,16 +282,16 @@ lemma "A \<longrightarrow> \<not> \<not> A"
   apply (rule impI)
   apply (rule notI)
   apply (erule notE)
-  apply assumption
+  apply assumption 
   done 
 
 lemma "\<not> (A \<longleftrightarrow> \<not> A)"
   apply (rule notI)
   apply (erule iffE)
-  apply (erule impE) back 
-   apply (rule notI)
+  apply (erule impE)
+   apply (rule ccontr)
    apply (erule impE)
-    apply assumption 
+    apply assumption
    apply (erule notE)
    apply assumption
   apply (erule impE)
@@ -295,16 +304,19 @@ lemma "(A \<longrightarrow> B) \<longrightarrow> (\<not> B \<longrightarrow> \<n
   apply (rule impI)+
   apply (rule notI)
   apply (erule impE)
-   apply assumption
+  apply assumption
   apply (erule notE)
   apply assumption
   done 
 
 lemma "\<not> A \<or> B \<longrightarrow> (A \<longrightarrow> B)"
   apply (rule impI)+
+  apply (rule ccontr)
   apply (erule disjE)
-   apply (erule notE)
-   apply assumption+
+   apply (erule notE) back 
+   apply assumption
+  apply (erule notE)
+  apply assumption
   done 
 
   text_raw \<open> \end{exercise} \<close>
@@ -353,15 +365,15 @@ text \<open>Pokazati da su sledeće formule valjane u logici prvog reda.
 lemma "(\<forall> x. Man x \<longrightarrow> Mortal x) \<and> Man Socrates \<longrightarrow> Mortal Socrates"
   apply (rule impI)
   apply (erule conjE)
-  apply (erule_tac x="Socrates" in allE)
+  apply (erule_tac x="Socrates"  in allE)
   apply (erule impE)
    apply assumption+
   done 
 
 lemma de_Morgan_1: "(\<exists> x. \<not> P x) \<longrightarrow> \<not> (\<forall> x. P x)"
   apply (rule impI)
-  apply (erule exE)
   apply (rule notI)
+  apply (erule exE)
   apply (erule_tac x="x" in allE)
   apply (erule notE)
   apply assumption
@@ -373,7 +385,7 @@ lemma de_Morgan_2: "(\<forall> x. \<not> P x) \<longrightarrow> (\<nexists> x. P
   apply (erule exE)
   apply (erule_tac x="x" in allE)
   apply (erule notE)
-  apply assumption 
+  apply assumption
   done 
 
 lemma de_Morgan_3: "(\<nexists> x. P x) \<longrightarrow> (\<forall> x. \<not> P x)"
@@ -382,7 +394,7 @@ lemma de_Morgan_3: "(\<nexists> x. P x) \<longrightarrow> (\<forall> x. \<not> P
   apply (rule notI)
   apply (erule notE)
   apply (rule_tac x="x" in exI)
-  apply assumption
+  apply assumption 
   done 
 
 lemma "(\<exists> x. P x) \<and> (\<forall> x. P x \<longrightarrow> Q x) \<longrightarrow> (\<exists> x. Q x)"
@@ -448,6 +460,35 @@ text \<open>Ako za svaki broj koji nije paran važi da je neparan;\\
       i ako za svaki neparan broj važi da nije paran;\\
       pokazati da onda za svaki broj važi da nije istovremeno i paran i neparan.\<close>
 
+(*
+
+paran(x) = x je paran 
+neparan(x) = x je neparan 
+
+\<forall>x. \<not> paran x \<longrightarrow> neparan x 
+\<forall>x. neparan x \<longrightarrow> \<not> paran x 
+\<longrightarrow> \<forall>x. \<not> (paran x \<and> neparan x)
+
+*)
+
+lemma "(\<forall>x. \<not> paran x \<longrightarrow> neparan x) \<and> (\<forall>x. neparan x \<longrightarrow> \<not> paran x) \<longrightarrow> (\<forall>x. \<not> (paran x \<and> neparan x))"
+  by auto
+
+lemma "(\<forall>x. \<not> paran x \<longrightarrow> neparan x) \<and> (\<forall>x. neparan x \<longrightarrow> \<not> paran x) \<longrightarrow> (\<forall>x. \<not> (paran x \<and> neparan x))"
+  apply (rule impI)
+  apply (erule conjE)
+  apply (rule allI)
+  apply (erule_tac x="x" in allE)+
+  apply (rule notI)
+  apply (erule conjE)
+  apply (erule impE)+
+    apply assumption+
+  apply (erule impE)
+   apply assumption
+  apply (erule notE)
+  apply assumption
+  done 
+
 text \<open>Ako je svaki kvadrat romb;\\
       i ako je svaki kvadrat pravougaonik;\\
       i ako znamo da postoji makar jedan kvadrat;\\
@@ -459,23 +500,23 @@ kvadrat(x) = x je kvadrat
 romb(x) = x je romb 
 pravougaonik(x) = x je pravougaonik 
 
-
 \<forall>x. kvadrat x \<longrightarrow> romb x 
 \<forall>x. kvadrat x \<longrightarrow> pravougaonik x 
 \<exists>x. kvadrat x 
+
 \<longrightarrow> \<exists>x. romb x \<and> pravougaonik x
 
 *)
 
 lemma "(\<forall>x. kvadrat x \<longrightarrow> romb x) \<and> (\<forall>x. kvadrat x \<longrightarrow> pravougaonik x) \<and> (\<exists>x. kvadrat x) \<longrightarrow> (\<exists>x. romb x \<and> pravougaonik x)"
-  by auto
+  by auto 
 
 lemma "(\<forall>x. kvadrat x \<longrightarrow> romb x) \<and> (\<forall>x. kvadrat x \<longrightarrow> pravougaonik x) \<and> (\<exists>x. kvadrat x) \<longrightarrow> (\<exists>x. romb x \<and> pravougaonik x)"
   apply (rule impI)
   apply (erule conjE)+
   apply (erule exE)
-  apply (erule_tac x="x" in allE)+
   apply (rule_tac x="x" in exI)
+  apply (erule_tac x="x" in allE)+
   apply (rule conjI)
    apply (erule impE)
     apply assumption+
@@ -483,23 +524,47 @@ lemma "(\<forall>x. kvadrat x \<longrightarrow> romb x) \<and> (\<forall>x. kvad
    apply assumption+
   done 
 
-lemma
-  assumes "(\<forall>x. kvadrat x \<longrightarrow> romb x)"
-  assumes "(\<forall>x. kvadrat x \<longrightarrow> pravougaonik x)"
-  assumes "(\<exists>x. kvadrat x)"
-  shows " (\<exists>x. romb x \<and> pravougaonik x)"
-proof -
-  from assms(3) obtain x where "kvadrat x" by auto 
-  from this assms(1) have "romb x" by auto 
-  from \<open>kvadrat x\<close> assms(2) have "pravougaonik x" by auto
-  from this \<open>romb x\<close> have "romb x \<and> pravougaonik x" by auto 
-  from this show "\<exists>x. romb x \<and> pravougaonik x" by auto 
-qed
-
-
 text \<open>Ako je relacija R simetrična, tranzitivna\\
       i ako za svako x postoji y koje je sa njim u relaciji,\\ 
       onda je relacija R i refleksivna.\<close>
+
+(*
+
+simetricna:   \<forall>x y. R x y \<longrightarrow> R y x 
+tranzitivna:  \<forall>x y z. R x y \<and> R y z \<longrightarrow> R x z 
+refleksivna:  \<forall>x. R x x 
+
+simetricna \<and> tranzitivna \<and> (\<forall>x. \<exists>y. R x y) \<longrightarrow> refleksivna 
+
+*)
+
+definition "simetricna R \<equiv> \<forall>x y. R x y \<longrightarrow> R y x"
+definition "tranzitivna R \<equiv> \<forall>x y z. R x y \<and> R y z \<longrightarrow> R x z"
+definition "refleksivna R \<equiv> \<forall>x. R x x"
+
+lemma "(simetricna R) \<and> (tranzitivna R) \<and> (\<forall>x. \<exists>y. R x y) \<longrightarrow> refleksivna R"
+  unfolding simetricna_def tranzitivna_def refleksivna_def
+  by auto 
+
+lemma "(simetricna R) \<and> (tranzitivna R) \<and> (\<forall>x. \<exists>y. R x y) \<longrightarrow> refleksivna R"
+  unfolding simetricna_def tranzitivna_def refleksivna_def
+  apply (rule impI)
+  apply (erule conjE)+
+  apply (rule allI)
+  apply (erule_tac x="x" in allE) back back 
+  apply (erule exE)
+  apply (erule_tac x="x" in allE)
+  apply (erule_tac x="x" in allE)
+  apply (erule_tac x="y" in allE)
+  apply (erule_tac x="y" in allE)
+  apply (erule_tac x="x" in allE)
+  apply (erule impE)
+   apply assumption
+  apply (erule impE)
+   apply (rule conjI)
+  apply assumption+
+  done 
+
 
 text \<open>Savet: Pomoću ključne reči \<open>definition\<close> definisati osobinu refleksivnosti,
       tranzitivnosti i simetricnosti. Ta formulisati tvđenje i dokazati ga.
@@ -524,7 +589,7 @@ lemma "\<not> \<not> A \<longrightarrow> A"
   apply (rule impI)
   apply (rule ccontr)
   apply (erule notE)
-  apply assumption
+  apply (assumption)
   done 
 
 text \<open>Dokazati sledeća tvrđenja:\<close>
@@ -580,7 +645,7 @@ lemma "(A \<longrightarrow> B) \<longrightarrow> (\<not> A \<or> B)"
   apply (rule ccontr)
   apply (erule impE)
    apply (rule ccontr)
-  apply (erule notE)
+   apply (erule notE)
    apply (rule disjI1)
    apply assumption
   apply (erule notE)
@@ -593,15 +658,15 @@ lemma "(\<not> P \<longrightarrow> Q) \<longleftrightarrow> (\<not> Q \<longrigh
    apply (rule impI)
    apply (rule ccontr)
    apply (erule impE)
-    apply assumption 
+  apply assumption
    apply (erule notE)
-   apply assumption 
+   apply assumption
   apply (rule impI)
   apply (rule ccontr)
   apply (erule impE)
-   apply assumption 
+   apply assumption
   apply (erule notE)
-  apply assumption
+  apply assumption 
   done 
 
 lemma "((P \<longrightarrow> Q) \<longrightarrow> P) \<longrightarrow> P"
@@ -610,9 +675,9 @@ lemma "((P \<longrightarrow> Q) \<longrightarrow> P) \<longrightarrow> P"
   apply (erule impE)
    apply (rule impI)
    apply (erule notE)
-   apply assumption 
+   apply assumption
   apply (erule notE)
-  apply assumption 
+  apply assumption
   done 
 
 text_raw \<open> \end{exercise} \<close>
@@ -625,16 +690,90 @@ text \<open>Pokazati naredna tvrđenja pomoću pravila \<open>classical\<close>.
 thm classical
 
 lemma "P \<or> \<not> P"
+  apply (rule classical)
   (*<*) oops (*>*)
 
 lemma "(A \<longleftrightarrow> (A \<longleftrightarrow> B)) \<longrightarrow> B"
-  (*<*) oops (*>*)
+  apply (rule impI)
+  apply (rule classical)
+  apply (erule iffE)
+  apply (erule impE) 
+   apply (rule classical)
+   apply (erule impE)
+    apply (rule iffI)
+     apply (erule notE) back 
+     apply assumption
+    apply (erule notE)
+    apply assumption
+   apply assumption
+  apply (rule classical)
+  apply (erule impE)
+   apply (rule iffI)
+    apply (erule iffE)
+    apply (erule impE)
+     apply assumption+
+   apply (erule iffE)
+   apply (erule impE) back 
+    apply assumption+
+  apply (erule iffE)
+  apply (erule impE)
+   apply assumption+
+  done 
 
 text \<open>\<open>Paradoks pijanca\<close>:\\
       Postoji osoba za koju važi, ako je on pijanac onda su i svi ostali pijanci.\<close>
 
 lemma drinker's_paradox: "\<exists> x. drunk x \<longrightarrow> (\<forall> x. drunk x)"
   (*<*) oops (*>*)
+
+lemma "\<lbrakk>P = P'; (P' \<longrightarrow> Q = Q')\<rbrakk> \<Longrightarrow> (P \<and> Q) = (P' \<and> Q')"
+  apply (rule iffI)
+   apply (erule conjE)
+   apply (rule conjI)
+    apply (erule impE) 
+     apply (erule iffE)
+     apply (erule impE)
+      apply assumption+
+    apply (erule iffE)
+    apply (erule impE)
+     apply assumption+
+   apply (erule impE)
+    apply (erule iffE)
+    apply (erule impE)
+     apply assumption+
+   apply (erule iffE) back 
+   apply (erule impE)
+    apply assumption+
+  apply (erule conjE)
+  apply (rule conjI)
+   apply (erule iffE)
+   apply (erule impE) back back 
+    apply assumption+
+  apply (erule impE) 
+   apply assumption
+  apply (erule iffE) back 
+  apply (erule impE) back 
+   apply assumption+
+  done 
+
+lemma "(\<forall> x. P x \<and> Q x) \<longleftrightarrow> (\<forall> x. P x) \<and> (\<forall> x. Q x)"
+  apply (rule iffI)
+   apply (rule conjI)
+    apply (rule allI)
+    apply (erule_tac x="x" in allE)
+    apply (erule conjE)
+    apply assumption
+   apply (rule allI)
+   apply (erule_tac x="x" in allE)
+   apply (erule conjE)
+   apply assumption
+  apply (erule conjE)
+  apply (rule allI)
+  apply (erule_tac x="x" in allE)+
+  apply (rule conjI)
+   apply assumption+
+  done 
+
 
 text_raw \<open> \end{exercise} \<close>
 

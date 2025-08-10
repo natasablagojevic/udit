@@ -19,12 +19,6 @@ primrec alternirajuca_suma :: "nat \<Rightarrow> int" where
   "alternirajuca_suma 0 = undefined"
 | "alternirajuca_suma (Suc n) = undefined"
 
-primrec suma:: "nat \<Rightarrow> int"
-  where "suma 0 = 0"
-  | "suma (Suc n) = suma n + (-1)^(Suc n) * (2 * int(Suc n) - 1)"
-
-value "suma 3"
-
 text \<open>Proveriti vrednost funkcije \<open>alternirajuca_suma\<close> za proizvoljan prirodni broj.\<close>
 
 text \<open>Dokazati sledeću lemu induckijom koristeći metode za automatsko dokazivanje.\<close>
@@ -32,35 +26,10 @@ text \<open>Dokazati sledeću lemu induckijom koristeći metode za automatsko do
 lemma "alternirajuca_suma n = (-1)^n * int n"
 (*<*) oops (*>*)
 
-lemma "suma n = (-1)^n * int n"
-  by (induction n ) (auto simp add: algebra_simps)
-
 text \<open>Dokazati sledeću lemu indukcijom raspisivanjem detaljnog Isar dokaza.\<close>
 
 lemma "alternirajuca_suma n = (-1)^n * int n"
 (*<*) oops (*>*)
-
-lemma "suma n = (-1)^n * int n"
-proof (induction n)
-  case 0
-  then show ?case by (auto simp add: algebra_simps)
-next
-  case (Suc n)
-  note IH = this
-  have "suma (Suc n) = suma n + (-1)^(Suc n) * (2 * int(Suc n) - 1)" by (auto simp add: algebra_simps)
-  also have "... = (-1)^n * int n + (-1)^(Suc n) * (2 * int(Suc n) - 1)" using IH by (auto simp add: algebra_simps)
-  also have "... = (-1)^n * int n + (-1)^(n+1) * (2 * int(n+1) - 1)" by (auto simp add: algebra_simps)
-  also have "... = (-1)^n * int n + (-1)^(n+1) * (2 * int n + 2 - 1)" by (auto simp add: algebra_simps)
-  also have "... = (-1)^n * int n + (-1)^(n+1) * (2 * int n + 1)" by (auto simp add: algebra_simps)
-  also have "... = (-1)^n * int n - (-1)^n * (2 * int n + 1)" by (auto simp add: algebra_simps)
-  also have "... = (-1)^n * int n - (-1)^n * 2 * int n - (-1)^n" by (auto simp add: algebra_simps)
-  also have "... = (-1)*(-1)^n * int n - (-1)^n" by (auto simp add: algebra_simps)
-  also have "... = (-1)^(n+1) * int n + (-1)^(n+1)" by (auto simp add: algebra_simps) 
-  also have "... = (-1)^(n+1) * (int n + 1)" by (auto simp add: algebra_simps)
-  also have "... = (-1)^(Suc n) * int(Suc n)" by (auto simp add: algebra_simps)
-  finally show ?case .
-qed
-
 
 text_raw \<open>\end{exercise}\<close>
 
@@ -86,8 +55,6 @@ text \<open>Definisati tip \<open>mat2\<close> koji predstavlja jednu \<open>2\<
       Tip \<open>mat2\<close> definisati kao skraćenicu uređene četvorke prirodnih brojeva.
       Uređena četvorka odgovara \<open>2\<times>2\<close> matrici kao\<close>
 
-type_synonym mat2 = "nat \<times> nat \<times> nat \<times> nat"
-
 text_raw 
 \<open>$$
 (a, b, c, d) \equiv
@@ -99,40 +66,25 @@ $$\<close>
 
 text \<open>Definisati konstantu \<open>eye :: mat2\<close>, koja predstavlja jediničnu matricu.\<close>
 
-definition "eye \<equiv> (1,0,0,1)"
-
 text \<open>Definisati funkciju \<open>mat_mul :: mat2 \<Rightarrow> mat2 \<Rightarrow> mat2\<close>, koja množi dve matrice.\<close>
 
-fun mat_mul:: "mat2 \<Rightarrow> mat2 \<Rightarrow> mat2"
-  where "mat_mul (a1,b1,c1,d1) (a2,b2,c2,d2) = (a1*a2+b1*c2, a1*b2+b1*d2, c1*a2+d1*c2, c1*b2+d1*d2)"
-
+fun mat_mul where
+  "mat_mul (a1, b1, c1, d1) (a2, b2, c2, d2) = undefined"
 
 text \<open>Definisati funkciju \<open>mat_pow :: mat2 \<Rightarrow> nat \<Rightarrow> mat2\<close>, koja stepenuje matricu.\<close>
 
-fun mat_pow:: "mat2 \<Rightarrow> nat \<Rightarrow> mat2"
-  where "mat_pow _ 0 = (1,0,0,1)"
-  | "mat_pow M (Suc n) = mat_mul (mat_pow M n) M" 
+fun mat_pow where
+  "mat_pow _ _ = undefined"
 
 text \<open>Dokazati sledeću lemu koristeći metode za automatsko dokazivanje.\<close>
 
 lemma "mat_pow (1, 1, 0, 1) n = (1, n, 0, 1)"
-  by (induction  n) (auto simp add: algebra_simps)
+(*<*) oops (*>*)
 
 text \<open>Dokazati sledeću lemu indukcijom raspisivanjem detaljnog Isar dokaza.\<close>
 
 lemma "mat_pow (1, 1, 0, 1) n = (1, n, 0, 1)"
-proof (induction  n)
-  case 0
-  then show ?case by (auto simp add: algebra_simps)
-next
-  case (Suc n)
-  note IH = this
-  have "mat_pow (1,1,0,1) (Suc n ) = mat_mul (mat_pow (1,1,0,1) n) (1,1,0,1)" by (auto simp add: algebra_simps)
-  also have "... = mat_mul (1,n,0,1) (1,1,0,1)" using IH by (auto simp add: algebra_simps)
-  also have "... = (1,n+1,0,1)" by (auto simp add: algebra_simps)
-  also have "... = (1, Suc n, 0, 1)" by (auto simp add: algebra_simps)
-  finally show ?case .
-qed
+(*<*) oops (*>*)
 
 text_raw \<open>\end{exercise}\<close>
 
@@ -145,16 +97,7 @@ text \<open>Pokazati sledeću lemu.\\
 lemma 
   fixes n::nat
   shows "(6::nat) dvd n * (n + 1) * (2 * n + 1)"
-proof (induction n)
-  case 0
-  then show ?case by (auto simp add: algebra_simps)
-next
-  case (Suc n)
-  then obtain k::nat where IH: "n*(n+1)*(2*n+1) = 6*k" by auto 
-  have "(Suc n) * (Suc n + 1) * (2 * Suc n + 1) = (n+1) * (n+1 + 1) * (2*(n+1) + 1)" by (auto simp add: algebra_simps)
-  also have "..."
-  then show ?case sorry
-qed
+(*<*) oops (*>*)
 
 text_raw \<open>\end{exercise}\<close>
 

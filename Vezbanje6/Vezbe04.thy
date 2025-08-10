@@ -26,26 +26,26 @@ text \<open>Pokazati sledeća tvrđenja o skupovima pomoću jezika Isar.\<close>
 text \<open>\<open>Napomena\<close>: Dozvoljeno je korišćenje samo \<open>simp\<close> metode za
                   dokazivanje pojedinačnih koraka.\<close>
 
-lemma "- (A \<union> B) = - A \<inter> - B"
-proof 
-  show " - (A \<union> B) \<subseteq> - A \<inter> - B"
+lemma "- (A \<union> B) = - A \<inter> - B" (is "?left = ?right")
+proof
+  show "?left \<subseteq> ?right"
   proof
-    fix x
-    assume "x \<in> -(A \<union> B)"
-    then have "x \<notin> (A \<union> B)" by simp
-    then have "x \<notin> A \<and> x \<notin> B" by simp
-    then have "x \<in> -A \<and> x \<in> -B" by simp 
-    then show "x \<in> -A \<inter> -B" by simp
+    fix x 
+    assume "x \<in> - (A \<union> B)"
+    then have "x \<notin> A \<union> B" by auto 
+    then have "x \<notin> A \<and> x \<notin> B" by auto 
+    then have "x \<in> -A \<and> x \<in> -B" by auto 
+    then show "x \<in> -A \<inter> -B" by auto 
   qed
 next 
-  show "- A \<inter> - B \<subseteq> - (A \<union> B)"
+  show "?right \<subseteq> ?left"
   proof
-    fix x
+    fix x 
     assume "x \<in> -A \<inter> -B"
-    then have "x \<in> -A \<and> x \<in> -B" by simp
-    then have "x \<notin> A \<and> x \<notin> B" by simp
-    then have "x \<notin> A \<union> B" by simp
-    then show "x \<in> -(A \<union> B)" by simp
+    then have "x \<in> -A \<and> x \<in> -B" by auto 
+    then have "x \<notin> A \<and> x \<notin> B" by auto 
+    then have "x \<notin> A \<union> B" by auto 
+    then show "x \<in> -(A \<union> B)" by auto 
   qed
 qed
 
@@ -58,18 +58,18 @@ proof
   proof
     fix x
     assume "x \<in> A \<union> B"
-    then have "x \<in> A \<or> x \<in> B" by simp 
-    then have "x \<in> B \<or> x \<in> A" using disj_commute  by simp 
-    then show "x \<in> B \<union> A" by simp
+    then have "x \<in> A \<or> x \<in> B" by auto 
+    then have "x \<in> B \<or> x \<in> A" using HOL.disj_commute by auto 
+    then  show "x \<in> B \<union> A" by auto
   qed
 next
   show "B \<union> A \<subseteq> A \<union> B"
   proof
     fix x 
-    assume "x \<in> B \<union> A" 
-    then have "x \<in> B \<or> x \<in> A" by simp 
-    then have "x \<in> A \<or> x \<in> B" using disj_commute by simp 
-    then show "x \<in> A \<union> B" by simp 
+    assume "x \<in> B \<union> A"
+    then have "x \<in> B \<or> x \<in> A" by auto 
+    then have "x \<in> A \<or> x \<in> B" using HOL.disj_commute by auto 
+    then show "x \<in> A \<union> B" by auto
   qed
 qed
 
@@ -78,32 +78,32 @@ text \<open>\<open>Savet\<close>: Iskoristiti aksiomu isključenja trećeg @{tex
 
 lemma "A \<union> (B \<inter> C) = (A \<union> B) \<inter> (A \<union> C)" (is "?left = ?right")
 proof
-  show "A \<union> (B \<inter> C) \<subseteq> (A \<union> B) \<inter> (A \<union> C)"
-  proof
-    fix x
-    assume "x \<in> A \<union> (B \<inter> C)"
-    then have "x \<in> A \<or> x \<in> B \<inter> C" by simp 
-    then have "x \<in> A \<or> (x \<in> B \<and> x \<in> C)" by simp
-    then have "(x \<in> A \<or> x \<in> B) \<and> (x \<in> A \<or> x \<in> C)" using disj_conj_distribL by simp 
-    then have "x \<in> (A \<union> B) \<and> x \<in> (A \<union> C)" by simp 
-    then show "x \<in> (A \<union> B) \<inter> (A \<union> C)" by simp
-  qed
-next
-  show "(A \<union> B) \<inter> (A \<union> C) \<subseteq> A \<union> (B \<inter> C)"
+  show "?left \<subseteq> ?right"
   proof
     fix x 
-    assume "x \<in> (A \<union> B) \<inter> (A \<union> C)" 
-    then have "x \<in> A \<union> B \<and> x \<in> A \<union> C" by simp 
+    assume "x \<in> A \<union> (B \<inter> C)"
+    then have "x \<in> A \<or> x \<in> B \<inter> C" by auto 
+    then have "x \<in> A \<or> (x \<in> B \<and> x \<in> C)" by auto 
+    then have "(x \<in> A \<or> x \<in> B) \<and> (x \<in> A \<or> x \<in> C)" by auto 
+    then have "x \<in> A \<union> B \<and> x \<in> A \<union> C" by auto 
+    then show "x \<in> (A \<union> B) \<inter> (A \<union> C)" by auto 
+  qed
+next
+  show "?right \<subseteq> ?left"
+  proof
+    fix x 
+    assume "x \<in> (A \<union> B) \<inter> (A  \<union> C)"
+    then have "x \<in> A \<union> B \<and> x \<in> A \<union> C" by simp
     then have "(x \<in> A \<or> x \<in> B) \<and> (x \<in> A \<or> x \<in> C)" by simp 
-    then have "x \<in> A \<or> (x \<in> B \<and> x \<in> C)" using disj_conj_distribL  by simp 
+    then have "x \<in> A \<or> (x \<in> B \<and> x \<in> C)"  using HOL.disj_conj_distribL by simp
     then have "x \<in> A \<or> x \<in> B \<inter> C" by simp 
-    then show "x \<in> A \<union> (B \<inter> C)" by simp 
+    then show "x \<in> A \<union> (B \<inter> C)" by simp
   qed
 qed
 
 lemma "A \<inter> (B \<union> C) = (A \<inter> B) \<union> (A \<inter> C)" (is "?left = ?right")
 proof
-  show "A \<inter> (B \<union> C) \<subseteq> (A \<inter> B) \<union> (A \<inter> C)"
+  show "?left \<subseteq> ?right"
   proof
     fix x 
     assume "x \<in> A \<inter> (B \<union> C)"
@@ -111,16 +111,16 @@ proof
     then have "x \<in> A \<and> (x \<in> B \<or> x \<in> C)" by simp 
     then have "(x \<in> A \<and> x \<in> B) \<or> (x \<in> A \<and> x \<in> C)" by simp 
     then have "x \<in> A \<inter> B \<or> x \<in> A \<inter> C" by simp 
-    then show "x \<in> (A \<inter> B) \<union> (A \<inter> C)" by simp 
+    then show "x \<in> (A \<inter> B) \<union> (A \<inter> C)" by simp
   qed
 next 
-  show "(A \<inter> B) \<union> (A \<inter> C) \<subseteq> A \<inter> (B \<union> C)"
+  show "?right \<subseteq> ?left"
   proof
     fix x 
     assume "x \<in> (A \<inter> B) \<union> (A \<inter> C)"
     then have "x \<in> A \<inter> B \<or> x \<in> A \<inter> C" by simp 
     then have "(x \<in> A \<and> x \<in> B) \<or> (x \<in> A \<and> x \<in> C)" by simp 
-    then have "x \<in> A \<and> (x \<in> B \<or> x \<in> C)" using conj_disj_distribL by simp
+    then have "x \<in> A \<and> (x \<in> B \<or> x \<in> C)" using HOL.conj_disj_distribL  by simp 
     then have "x \<in> A \<and> x \<in> B \<union> C" by simp 
     then show "x \<in> A \<inter> (B \<union> C)" by simp
   qed
@@ -128,27 +128,27 @@ qed
 
 lemma "A - (B \<inter> C ) = (A - B) \<union> (A - C )" (is "?left = ?right")
 proof
-  show "A - (B \<inter> C) \<subseteq> (A - B) \<union> (A - C)"
+  show "?left \<subseteq> ?right"
   proof
     fix x 
     assume "x \<in> A - (B \<inter> C)"
-    then have "x \<in> A \<and> x \<notin> (B \<inter> C)" by simp 
+    then have "x \<in> A \<and> x \<notin> B \<inter> C" by simp 
     then have "x \<in> A \<and> (x \<notin> B \<or> x \<notin> C)" by simp 
-    then have "x \<in> A \<and> (x \<in> -B \<or> x \<in> -C)" by simp
+    then have "x \<in> A \<and> (x \<in> -B \<or> x \<in> -C)" by simp 
     then have "(x \<in> A \<and> x \<in> -B) \<or> (x \<in> A \<and> x \<in> -C)" by simp 
     then have "(x \<in> A \<and> x \<notin> B) \<or> (x \<in> A \<and> x \<notin> C)" by simp 
     then have "x \<in> A - B \<or> x \<in> A - C" by simp 
-    then show "x \<in> (A - B)\<union>(A - C)" by simp
+    then show "x \<in> (A - B) \<union> (A - C)" by simp 
   qed
 next 
-  show "(A - B) \<union> (A - C) \<subseteq> A - (B \<inter> C)"
+  show "?right \<subseteq> ?left"
   proof
     fix x 
-    assume "x \<in> (A - B) \<union> (A - C)"
+    assume "x \<in> (A - B) \<union> (A - C)" 
     then have "x \<in> A - B \<or> x \<in> A - C" by simp 
-    then have "(x \<in> A \<and> x \<notin> B) \<or> (x \<in> A \<and> x \<notin> C)" by simp
-    then have "(x \<in> A \<and> x \<in> -B) \<or> (x \<in> A \<and> x \<in> -C)" by simp 
-    then have "x \<in> A \<and> (x \<in> -B \<or> x \<in> -C)" by auto
+    then have "(x \<in> A \<and> x \<notin> B) \<or> (x \<in> A \<and> x \<notin> C)" by simp 
+    then have "(x \<in> A \<and> x \<in> -B) \<or> (x \<in> A \<and> x \<in> -C)" by simp
+    then have "x \<in> A \<and> (x \<in> -B \<or> x \<in> -C)" using HOL.conj_disj_distribL by auto
     then have "x \<in> A \<and> (x \<notin> B \<or> x \<notin> C)" by simp 
     then have "x \<in> A \<and> x \<notin> B \<inter> C" by simp 
     then show "x \<in> A - (B \<inter> C)" by simp
