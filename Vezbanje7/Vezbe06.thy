@@ -11,13 +11,27 @@ lemma
   assumes "(\<exists> x. P x)"
       and "(\<forall> x. P x \<longrightarrow> Q x)"
     shows "(\<exists> x. Q x)"
-(*<*) oops (*>*)
+proof - 
+  from assms(1) obtain x where "P x" by auto 
+  show ?thesis
+  proof
+    from \<open>P x\<close> assms(2) show "Q x" by auto
+  qed
+qed
 
 lemma
   assumes "\<forall> c. Man c \<longrightarrow> Mortal c"
       and "\<forall> g. Greek g \<longrightarrow> Man g"
     shows "\<forall> a. Greek a \<longrightarrow> Mortal a"
-(*<*) oops (*>*)
+proof
+  fix x 
+  show "Greek x \<longrightarrow> Mortal x"
+  proof
+    assume "Greek x" 
+    with assms(2) have "Man x" by auto 
+    with assms(1) show "Mortal x" by auto 
+  qed
+qed
 
 text \<open>Dodatni primer:\<close>
 
@@ -25,6 +39,31 @@ text \<open>Ako svaki konj ima potkovice;\\
       i ako ne postoji čovek koji ima potkovice;\\
       i ako znamo da postoji makar jedan čovek;\\
       dokazati da postoji čovek koji nije konj.\<close>
+
+lemma 
+  assumes "\<forall>x. konj x \<longrightarrow> potkovice x"
+  assumes "\<nexists>x. covek x \<and> potkovice x"
+  assumes "\<exists>x. covek x" 
+  shows "\<exists>x. covek x \<and> \<not> konj x" 
+proof - 
+  from assms(3) obtain x where "covek x" by auto 
+  show ?thesis 
+  proof
+    show "covek x \<and> \<not> konj x" 
+    proof
+      from \<open>covek x\<close> show "covek x" by auto 
+    next 
+      show "\<not> konj x"
+      proof
+        assume "konj x" 
+        with assms(1) have "potkovice x" by auto 
+        with \<open>covek x\<close> have "covek x \<and> potkovice x" by auto 
+        then have "\<exists>x. covek x \<and> potkovice x" by auto 
+        with assms(2) show False by auto 
+      qed
+    qed
+  qed
+qed
 
 text_raw \<open>\end{exercise}\<close>
 

@@ -135,7 +135,7 @@ next
   also have "... = n*(3*n-1)*x div 2 + (3*(n+1) - 2) * x" by (simp add: algebra_simps)
   also have "... = n*(3*n-1)*x div 2 + (3*n + 1) * x" by (simp add: algebra_simps)
   also have "... = n*(3*n-1)*x div 2 + 2*(3*n+1)*x div 2" by (simp add: algebra_simps)
-  also have "... = (n*(3*n-1)+2*(3*n+1))* x div 2" by auto
+  also have "... = (n*(3*n-1)+2*(3*n+1))* x div 2" by (simp add: add_mult_distrib)
   also have "... = (n+1) * (3*n+2) * x div 2" by (simp add: algebra_simps)
   also have "... = (Suc n) * (3 * (Suc n) - 1) * x div 2" by (simp add: algebra_simps)
   finally show ?case .

@@ -182,6 +182,22 @@ lemma vimage_compl:
   shows "f -` (- B) = - (f -` B)"
 (*<*) oops (*>*)
 
+lemma 
+  shows "f \<circ> g \<circ> h = f \<circ> (g \<circ> h)"
+proof
+  fix x
+
+  obtain y where "y = h x" by auto 
+  obtain z where "z = g y" by auto 
+  obtain t where "t = f z" by auto 
+
+  have "f z = f (g y)" using \<open>z = g y\<close> by auto 
+  also have "... = f (g (h x))" using \<open>y = h x\<close> by auto 
+  also have "... = f ((g \<circ> h) x)" by auto 
+  also have "... = (f \<circ> (g \<circ> h)) x" by auto
+  finally show "(f \<circ> g \<circ> h) x = (f \<circ> (g \<circ> h)) x" by auto 
+qed
+
 text_raw \<open> \end{exercise} \<close>
 
 (*<*)
