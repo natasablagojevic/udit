@@ -1,0 +1,41 @@
+theory Drveta
+  imports Main
+
+begin
+
+datatype t3 = 
+  List 
+  | Cvor t3 t3 t3
+
+fun br_list:: "t3 \<Rightarrow> nat"
+  where "br_list List = 1"
+  | "br_list (Cvor l s d) = br_list l + br_list s + br_list d"
+
+fun br_cvor:: "t3 \<Rightarrow> nat"
+  where "br_cvor List = 0"
+  | "br_cvor (Cvor l s d) = 1 + br_cvor l + br_cvor s + br_cvor d"
+
+lemma "br_list t = 2 * br_cvor t + 1"
+  by (induction t) auto 
+
+
+datatype 'a drvo = 
+  List 
+  | Cvor "'a drvo" 'a "'a drvo"
+
+definition test:: "nat drvo" where "test = Cvor (Cvor (Cvor List 1 List) 5 (Cvor (Cvor List 2 List) 3 (Cvor List 4 List))) 6 (Cvor (Cvor List 7 List) 8 (Cvor List 9 List))"
+
+fun zbir:: "'a drvo \<Rightarrow> 'a"
+  where "zbir List = 0"
+  | "zbir (Cvor levo x desno) = x + zbir levo + zbir desno"
+
+value "zbir test"
+
+
+
+
+
+
+
+
+end
